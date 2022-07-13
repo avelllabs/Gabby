@@ -51,6 +51,9 @@ def select_top_terms(topn=10):
 def get_close_terms(query, topn=10):
     global algo_names
     global keyterms
+    global nlp
+
+    query = str(query)
     qvec = nlp(query).vector.reshape(1, -1)
     close_terms = set()
     for algo in algo_names:

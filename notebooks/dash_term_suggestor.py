@@ -54,21 +54,21 @@ app.layout = html.Div(
                             ], 
                             className="align-middle text-left"
                         ),
-                        html.Br(),
-                        html.Div(
-                            [
-                                "Suggested terms ...",
-                                html.Br(),
-                                dbc.Button('test', id='btn-sg-01', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
-                                dbc.Button('test', id='btn-sg-02', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
-                                dbc.Button('test', id='btn-sg-03', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
-                                dbc.Button('test', id='btn-sg-04', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
-                                dbc.Button('test', id='btn-sg-05', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
+                        # html.Br(),
+                        # html.Div(
+                        #     [
+                        #         "Suggested terms ...",
+                        #         html.Br(),
+                        #         dbc.Button('test', id='btn-sg-01', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
+                        #         dbc.Button('test', id='btn-sg-02', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
+                        #         dbc.Button('test', id='btn-sg-03', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
+                        #         dbc.Button('test', id='btn-sg-04', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
+                        #         dbc.Button('test', id='btn-sg-05', size="sm", outline=True, className="me-2 mt-3", color="secondary"),
                                 
 
-                            ],
-                            className=" text-left me-6 mt-6" 
-                        )
+                        #     ],
+                        #     className=" text-left me-6 mt-6" 
+                        # )
                     ],
                     width={"size": 6, "offset": 2},
                     
@@ -123,10 +123,10 @@ def choose_category(selected_category, btn_more):
     seed_terms = list(btn_terms.values())
     if selected_category is not None:
         message = f'Getting reviews for "{selected_category}"... Please choose terms / features / aspects about {selected_category} that are important to you!'
-        seed_terms = phrase_data_model.select_top_terms(10)
+        seed_terms = phrase_data_model.select_top_terms(20)
         for i in range(10):
             btn_terms[f'btn-{i+1:02d}'] = seed_terms[i]
-    return message, *seed_terms
+    return message, *seed_terms[:10]
 
 
 
@@ -171,6 +171,7 @@ def displayClick(btn1, btn2, btn3, btn4, btn5,
 #TODO: make the suggestions
 #TODO: integrate the search
 #TODO: run it all with category data
+#TODO: please get intelligent with term suggestions. Please keep the buttons on for toggling etc
 
 
 if __name__ == "__main__":
