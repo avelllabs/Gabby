@@ -3,6 +3,8 @@ We extract key terms and phrases using various algorithms in this module
 """
 
 import pandas as pd
+from tqdm.notebook import tqdm
+tqdm.pandas()
 
 import nltk
 from nltk import BigramCollocationFinder, TrigramCollocationFinder
@@ -77,7 +79,8 @@ def keyterm_extraction_frequency(df):
 
 
 def _construct_textacy_document(df):
-    massive_doc = ' \n\n\n '.join(df['contents'].tolist() ).lower()
+    massive_doc = ' \n\n '.join(df['contents'].tolist() )
+    print(f"massive doc length = ", len(massive_doc))
     massive_spacy_doc = nlp(massive_doc)
     return massive_spacy_doc
 
@@ -126,7 +129,7 @@ def keyterm_extraction_entities_and_noun_chunks(df):
     """
     Returns spacy entities and noun chunks as phrases along with occurrence frequency as score
     """
-    spacy_docs = df['contents'].apply(lambda review: nlp(review))
+    spacy_docs = df['contents'].progress_apply(lambda review: nlp(review))
     all_noun_chunks = [e.text.lower() for sd in spacy_docs for sent in sd.sents for e in sent.noun_chunks]
     all_entities = [e.text.lower() for sd in spacy_docs for sent in sd.sents for e in sent.ents]
 
