@@ -18,6 +18,26 @@ app = Flask(__name__)
 
 
 
+
+@app.route('/getProducts', methods=['POST'])
+def get_products():
+    print('get_products')
+    
+    args = request.get_json()
+    print(args)
+
+    if 'attributes' not in args or len(args['attributes']) == 0 \
+        or 'liked_reviews' not in args:
+        print('No attributes or liked_reviews provided to fetch products')
+        return jsonify([])
+
+
+    products = gabby_data.get_products_for_attributes_and_liked_reviews(args['attributes'], args['liked_reviews'])
+    return products.to_json(orient='records')
+    
+
+
+
 @app.route('/getReviews', methods=['POST'])
 def get_reviews():
     print('get_reviews')
@@ -31,7 +51,13 @@ def get_reviews():
 
 
     reviews = gabby_data.get_reviews_for_attributes(args['attributes'])
-    return reviews.head().to_json(orient='records')
+    return reviews.to_json(orient='records')
+
+    # TODO:
+    # return {
+    #     "n_total_reviews" :  get_number of reviews for this category
+    #     "shortlisted_reviews": reviews.head().to_json(orient='records')
+    # }
     
 
     # NOTE: sample return
