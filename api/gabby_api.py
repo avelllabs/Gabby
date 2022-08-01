@@ -35,6 +35,8 @@ def get_products():
     products = gabby_data.get_products_for_attributes_and_liked_reviews(args['attributes'], args['liked_reviews'])
     return products.to_json(orient='records')
     
+    # NOTE: sample return
+    #return jsonify(gabby_data.sample_response_products)
 
 
 
