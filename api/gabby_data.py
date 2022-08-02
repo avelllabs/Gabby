@@ -86,12 +86,12 @@ def get_reviews_for_attributes(query_attributes):
     query_phrases = pd.read_sql(phrase_ids_query, conn)
 
     review_results_query = \
-    '''SELECT key_phrase_id, review_id 
+    f'''SELECT key_phrase_id, review_id 
         FROM key_phrase_reviews 
         WHERE key_phrase_id IN 
         (SELECT key_phrase_id 
         FROM key_phrase_root 
-        WHERE phrase IN ('the price', 'the stand', '2 weeks', 'quality'))
+        WHERE phrase IN ('{"','".join(query_attributes)}'))
     '''
     review_ids_for_query = pd.read_sql(review_results_query, conn)
     review_ids_for_query = review_ids_for_query.merge(query_phrases, on='key_phrase_id', how='left')
