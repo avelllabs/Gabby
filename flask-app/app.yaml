@@ -1,0 +1,9 @@
+runtime: python37
+entrypoint: gunicorn -b :$PORT main:app
+
+env_variables:
+  DB_USER: gabbydbuser
+  DB_PASS: gabbyDBpass
+  DB_NAME: gabbyDB
+  INSTANCE_CONNECTION_NAME: gabby-f6171:us-central1:gabbydb
+  INSTANCE_UNIX_SOCKET: /cloudsql/gabby-f6171:us-central1:gabbydb

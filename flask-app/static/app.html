@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Gabby.ai</title>
+    <link rel="icon" type="image/png" href="images/g_fav.png" />
+		
+		
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>	
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@900&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+	<link href="css/gabby.css" rel="stylesheet">
+	
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+	
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+
+</head>
+
+<body>
+
+	<main role="main" class="container">
+		<div class="row">
+			<div class="col">
+				<div id="backButton" style="visibility:hidden;cursor:pointer;" class="float-left">
+					<img src="images/arrow_back.svg">
+				</div>
+			</div>
+			<div class="col-8">				
+				<div id="logo">
+					<img src="images/LOGO.svg">
+				</div>
+			</div>
+			<div class="col">
+				<button class="btn btn_restart float-right" style="visibility:hidden;">Restart</button>
+			</div>		
+		</div>
+		<div class="row">			
+			
+		</div>
+		
+		<div id="page1">
+			<div class="row " style="padding-top:4rem;">
+				<div class="col-sm ">
+					<div id="step">Step 1</div>
+				</div>
+			</div>
+			
+			<div class="row" style="padding-top:1.5rem;">
+				<div class="col mx-auto" style="max-width:350px;">
+					<div id="step_instruction" >
+						Select the product you are interested
+					</div>
+			 
+				</div>
+			</div>
+			
+			<div class="row align-items-center justify-content-center" style="padding-top:1.5rem;">
+				<div class="col mx-auto">
+					<div id="more_categories_label" >
+						We will be adding more product categories after this experiment
+					</div>
+			 
+				</div>
+			</div>
+			
+			<div class="row align-items-center justify-content-around" style="margin-top:1.5rem;">
+				<div class="col-6 col-md-3">
+					<div class="product_category" name="Laptop">
+						<div class="row justify-content-center align-self-center" >
+							<img src="images/laptop.svg" style="max-height:84px">
+						</div>
+						<div class="row justify-content-center align-self-center" >
+							<div class="product_category_label">
+								Laptop
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-6 col-md-3">
+					<div class="product_category" name="Monitor">
+						<div class="row justify-content-center align-self-center" >
+							<img src="images/monitor.svg" style="max-height:84px">
+						</div>
+						<div class="row justify-content-center align-self-center" >
+							<div class="product_category_label">
+								Monitor
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-6 col-md-3">
+					<div class="product_category" name="Headphones">
+						<div class="row justify-content-center align-self-center" >
+							<img src="images/headphone.svg" style="max-height:84px">
+						</div>
+						<div class="row justify-content-center align-self-center" >
+							<div class="product_category_label">
+								Headphone
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-6 col-md-3">
+					<div class="product_category" name="Mouse">
+						<div class="row justify-content-center align-self-center" >
+							<img src="images/mouse.svg" style="max-height:84px">
+						</div>
+						<div class="row justify-content-center align-self-center" >
+							<div class="product_category_label">
+								Mouse
+							</div>
+						</div>
+					</div>
+				</div>				
+			</div>
+		</div>
+		
+		<div id="page2" style="display:none">
+			<div class="row " style="padding-top:4rem;">
+				<div class="col-sm ">
+					<div id="step">Step 2</div>
+				</div>
+			</div>
+			
+			<div class="row" style="padding-top:1.5rem;">
+				<div class="col mx-auto" style="max-width:500px;">
+					<div id="step2_instruction" >
+						Choose what matters to you when buying a <b>Monitor</b>
+					</div>
+			 
+				</div>
+			</div>
+			
+			<div class="row align-items-center justify-content-center" style="padding-top:1.5rem;">
+				<div class="col mx-auto">
+					<div id="step2_attribute_stats" >
+						These attributes are what <span id="attribute_pct" class="purple1">67%</span> of users find important within the category
+					</div>
+			 
+				</div>
+			</div>
+			
+			<div id="attributes_list">
+				<div class="row align-items-center justify-content-center my-4">				
+					<div class="btn-group-toggle" data-toggle="buttons">
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>					
+					</div>
+				</div>
+				<div class="row align-items-center justify-content-center my-4">				
+					<div class="btn-group-toggle" data-toggle="buttons">
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>					
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>					
+					</div>
+				</div>
+				<div class="row align-items-center justify-content-center my-4">				
+					<div class="btn-group-toggle" data-toggle="buttons">
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>
+						<label class="btn attribute_tag">
+							<input type="checkbox" autocomplete="off">Attribute
+						</label>					
+					</div>
+				</div>
+				
+				<div id="more_attributes" style="display:none;margin-top:2.5rem;">
+					<div class="row align-items-center justify-content-center my-4">				
+						<div class="btn-group-toggle" data-toggle="buttons">
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>					
+						</div>
+					</div>
+					<div class="row align-items-center justify-content-center my-4">				
+						<div class="btn-group-toggle" data-toggle="buttons">
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>					
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>					
+						</div>
+					</div>
+					<div class="row align-items-center justify-content-center my-4">				
+						<div class="btn-group-toggle" data-toggle="buttons">
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>
+							<label class="btn attribute_tag">
+								<input type="checkbox" autocomplete="off">Attribute
+							</label>					
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div class="row align-items-center justify-content-center my-5">
+				<div class="col-mx-auto show_more_attributes">
+					Show more
+				</div>				
+			</div>
+			
+			<div class="row align-items-center justify-content-center my-5">
+				<button type="button" class="btn btn_step2Continue" disabled>Continue</button>
+			</div>
+			
+			
+		</div>
+		
+		<div id="page3" style="display:none;">
+			<div class="row " style="padding-top:4rem;">
+				<div class="col-sm ">
+					<div id="step">Step 3</div>
+				</div>
+			</div>
+			
+			<div class="row" style="padding-top:1.5rem;">
+				<div class="col mx-auto" >
+					<div id="step_instruction" style="font-weight:700;">
+						Showing top 5 reviews based on what mattered to you
+					</div>
+			 
+				</div>
+			</div>
+			
+			<div class="row align-items-center justify-content-center" style="padding-top:1.5rem;">
+				<div class="col mx-auto">
+					<div id="step3_review_stats">
+						Scoured through <span id="reviews_count" class="purple1">5,368,489</span> from 
+						<span id="reviews_numSources" class="purple1">24</span> sources
+					</div>			 
+				</div>
+			</div>
+			<!--
+			<div class="row align-items-center justify-content-center" style="padding-top:1.5rem;">			
+				<div class="btn step3_attribute_tag">					
+					<img src="images/attribute_x.svg" style="margin-right:5px;padding-bottom:2px;">
+					Attribute
+				</div>
+				<div class="btn step3_attribute_tag">					
+					<img src="images/attribute_x.svg" style="margin-right:5px;padding-bottom:2px;">
+					Attribute
+				</div>
+				<div class="btn step3_attribute_tag">					
+					<img src="images/attribute_x.svg" style="margin-right:5px;padding-bottom:2px;">
+					Attribute
+				</div>				
+			</div>
+			-->
+			
+			<div class="row align-items-center justify-content-center" style="padding-top:1.5rem;">			
+				<div class="col" id="review_list">
+				
+					<div class="review_card">
+						<div class="row">
+							<div class="col-6">
+								<div class="review_text">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+								</div>
+								<div class="source_info">
+									Date | Source info
+								</div>
+							</div>
+							<div class="col-3">
+								<div class="attribute_header">
+									matching words
+								</div>
+								<div class="matching_words">
+									Attribute, Attribute
+								</div>
+								<!--<div class="attribute_header" style="margin-top:1.3rem;">
+									additional words
+								</div>
+								<div class="additional_words">
+									Attribute, Attribute, Attribute, Attribute, Attribute 
+								</div>-->
+							</div>
+							<div class="col-3">
+								<div class="helpful_header">
+									Resonates?
+								</div>
+								
+								<button class="btn thumbs_btn thumbs_up thumbs_up_button"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_button"></button>
+								
+								
+							</div>
+						</div>
+					</div>				
+					<div class="review_card">
+						<div class="row">
+							<div class="col-6">
+								<div class="review_text">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+								</div>
+								<div class="source_info">
+									Date | Source info
+								</div>
+							</div>
+							<div class="col-3">
+								<div class="attribute_header">
+									matching words
+								</div>
+								<div class="matching_words">
+									Attribute, Attribute
+								</div>
+								<!--<div class="attribute_header" style="margin-top:1.3rem;">
+									additional words
+								</div>
+								<div class="additional_words">
+									Attribute, Attribute, Attribute, Attribute, Attribute 
+								</div>-->
+							</div>
+							<div class="col-3">
+								<div class="helpful_header">
+									Resonates?
+								</div>
+								
+								<button class="btn thumbs_btn thumbs_up thumbs_up_button"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_button"></button>
+								
+								
+							</div>
+						</div>
+					</div>
+					<div class="review_card">
+						<div class="row">
+							<div class="col-6">
+								<div class="review_text">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+								</div>
+								<div class="source_info">
+									Date | Source info
+								</div>
+							</div>
+							<div class="col-3">
+								<div class="attribute_header">
+									matching words
+								</div>
+								<div class="matching_words">
+									Attribute, Attribute
+								</div>
+								<!--<div class="attribute_header" style="margin-top:1.3rem;">
+									additional words
+								</div>
+								<div class="additional_words">
+									Attribute, Attribute, Attribute, Attribute, Attribute 
+								</div>-->
+							</div>
+							<div class="col-3">
+								<div class="helpful_header">
+									Resonates?
+								</div>
+								
+								<button class="btn thumbs_btn thumbs_up thumbs_up_button"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_button"></button>
+								
+								
+							</div>
+						</div>
+					</div>
+					<div class="review_card">
+						<div class="row">
+							<div class="col-6">
+								<div class="review_text">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+								</div>
+								<div class="source_info">
+									Date | Source info
+								</div>
+							</div>
+							<div class="col-3">
+								<div class="attribute_header">
+									matching words
+								</div>
+								<div class="matching_words">
+									Attribute, Attribute
+								</div>
+								<!--<div class="attribute_header" style="margin-top:1.3rem;">
+									additional words
+								</div>
+								<div class="additional_words">
+									Attribute, Attribute, Attribute, Attribute, Attribute 
+								</div>-->
+							</div>
+							<div class="col-3">
+								<div class="helpful_header">
+									Resonates?
+								</div>
+								
+								<button class="btn thumbs_btn thumbs_up thumbs_up_button"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_button"></button>
+								
+								
+							</div>
+						</div>
+					</div>
+					<div class="review_card">
+						<div class="row">
+							<div class="col-6">
+								<div class="review_text">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+								</div>
+								<div class="source_info">
+									Date | Source info
+								</div>
+							</div>
+							<div class="col-3">
+								<div class="attribute_header">
+									matching words
+								</div>
+								<div class="matching_words">
+									Attribute, Attribute
+								</div>
+								<!--<div class="attribute_header" style="margin-top:1.3rem;">
+									additional words
+								</div>
+								<div class="additional_words">
+									Attribute, Attribute, Attribute, Attribute, Attribute 
+								</div>-->
+							</div>
+							<div class="col-3">
+								<div class="helpful_header">
+									Resonates?
+								</div>
+								
+								<button class="btn thumbs_btn thumbs_up thumbs_up_button"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_button"></button>
+								
+								
+							</div>
+						</div>
+					</div>
+					
+				</div>				
+			</div>
+			
+			<div class="row align-items-center justify-content-center my-5">
+				<button type="button" class="btn btn_step3Continue">
+				See products that matter to you
+				</button>
+			</div>
+			
+			<div class="row align-items-center justify-content-center my-5">
+				<div class="col-mx-auto show_more_reviews">
+					Show more reviews
+				</div>				
+			</div>
+			
+		</div>
+		
+		<div id="page4" style="display:none;">
+			
+			<div class="row" style="padding-top:1.5rem;">
+				<div class="col mx-auto" >
+					<div id="step_instruction" style="font-weight:700;">
+						Showing 3 best matched products
+					</div>
+			 
+				</div>
+			</div>
+			
+			<div class="row align-items-center justify-content-center" style="padding-top:1.5rem;">
+				<div class="col mx-auto">
+					<div id="step4_product_stats" >
+						Scoured through <span id="matchedProducts_count" class="purple1">5,466</span> based on what best mattered to you
+					</div>			 
+				</div>
+			</div>
+			
+			<div class="feedback_card">
+				<div class="row align-items-center">
+					<div class="col-8">
+						<div class="feedback_card_text">
+							Done! Thank you for interacting with Gabby :)
+							<br>
+							<b>We would really appreciate your feedback that would take you only seconds</b>
+						</div>					
+					</div>
+					<div class="col-4">
+						<button class="btn btn_feedback">Provide Feedback</button>
+					</div>
+
+				</div>
+			</div>
+			<div id="product_list">
+				<div class="product_card">
+					<div class="row">
+						<div class="col-3">
+							<div class="product_image">
+								<img src="images/product-img.png" class="img-fluid">
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="product_name">
+								Hisense 55R62G - 55" 4K UHD Dolby Vision HDR10 Roku Smart TV with DTS TruSurround, 3HDMI (Canada Model)
+							</div>
+							<div class="num_reviews">
+								2,678 reviews
+							</div>
+							<div class="row align-items-center">
+								<div class="product_card_helpful">Was it helpful</div>
+								<button class="btn thumbs_btn thumbs_up thumbs_up_button" style="margin-right: 0.5rem;"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_button"></button>
+							</div>
+						</div>							
+						<div class="col-3">
+							<div class="matching_score_header">
+								Matching score <img style="margin-left:0.5rem;padding-bottom:3px;" src="images/info.svg">
+							</div>
+							<div class="matching_score">
+								<div class="matching_score_circle">
+									<div class="matching_score_high">
+										<div class="matching_score_num">
+											87%
+										</div>
+									</div>										
+								</div>
+							</div>															
+						</div>
+					</div>
+				</div>	
+				
+				<div class="product_card">
+					<div class="row">
+					<div class="col-3">
+						<div class="product_image">
+							<img src="images/product-img.png" class="img-fluid">
+						</div>
+					</div>
+						<div class="col-6">
+							<div class="product_name">
+								HKC 24'' IPS Full HD Eye-Cared Frameless 1080P White Monitor HDMI VGA Input 3years warrenty V2412W
+							</div>
+							<div class="num_reviews">
+								1,678 reviews
+							</div>
+							<div class="row align-items-center">
+								<div class="product_card_helpful">Was it helpful</div>
+								<button class="btn thumbs_btn thumbs_up thumbs_up_button" style="margin-right: 0.5rem;"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_button"></button>
+							</div>
+						</div>							
+						<div class="col-3">
+							<div class="matching_score_header">
+								Matching score <img style="margin-left:0.5rem;padding-bottom:3px;" src="images/info.svg">
+							</div>
+							<div class="matching_score">
+								<div class="matching_score_circle">
+									<div class="matching_score_med">
+										<div class="matching_score_num">
+											45%
+										</div>
+									</div>										
+								</div>
+							</div>															
+						</div>
+					</div>
+				</div>	
+				
+				<div class="product_card">
+					<div class="row">
+					<div class="col-3">
+						<div class="product_image">
+							<img src="images/product-img.png" class="img-fluid">
+						</div>
+					</div>
+						<div class="col-6">
+							<div class="product_name">
+								Samsung LS27T350FHNXZA 27-inch Screen LED-Lit Monitor 5ms 75Hz Eye-Saver Mode with Freesync, Black (LF27T350FHNXZA)
+							</div>
+							<div class="num_reviews">
+								978 reviews
+							</div>
+							<div class="row align-items-center">
+								<div class="product_card_helpful">Was it helpful</div>
+								<button class="btn thumbs_btn thumbs_up thumbs_up_button" style="margin-right: 0.5rem;"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_button"></button>
+							</div>
+						</div>							
+						<div class="col-3">
+							<div class="matching_score_header">
+								Matching score <img style="margin-left:0.5rem;padding-bottom:3px;" src="images/info.svg">
+							</div>
+							<div class="matching_score">
+								<div class="matching_score_circle">
+									<div class="matching_score_low">
+										<div class="matching_score_num">
+											16%
+										</div>
+									</div>										
+								</div>
+							</div>															
+						</div>
+					</div>
+				</div>	
+			</div>
+			<div style="height:15rem;"></div>		
+			
+			
+			
+		</div>
+		
+
+	</main>
+
+	<script type="text/javascript" src="js/gabby.js"></script>
+
+</body>
+
+</html>
