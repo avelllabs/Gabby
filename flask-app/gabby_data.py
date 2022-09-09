@@ -1,13 +1,13 @@
 import os
 import io
 from soupsieve import match
+from sqlalchemy import create_engine
 from collections import Counter
 import pandas as pd
 import numpy as np
 from google.cloud.sql.connector import Connector, IPTypes
 import pg8000
 import sqlalchemy
-
 
 def connect_unix_socket() -> sqlalchemy.engine.base.Engine:
     # Note: Saving credentials in environment variables is convenient, but not
@@ -123,8 +123,19 @@ db = sqlalchemy.create_engine(
     )
 '''
 
-db = connect_with_connector()
-#db = connect_unix_socket()
+
+if os.environ['INSTANCE_CONNECTION_NAME'] == 'localhost':
+    conn_string = 'postgresql+psycopg2://gabbydbuser:gabbyDBpass@localhost:5432/gabbyDB'
+    db = create_engine(conn_string)
+else:
+    db = connect_with_connector()
+    #db = connect_unix_socket()
+
+
+
+# conn_string = 'postgresql+psycopg2://gabbydbuser:gabbyDBpass@localhost:5432/gabbyDB'
+# db = create_engine(conn_string)
+# conn = db.connect()
 
 conn = db.connect()
 
