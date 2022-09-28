@@ -1,0 +1,8 @@
+runtime: python310
+entrypoint: gunicorn -b :$PORT server:app
+  
+handlers:
+- url: /.*
+  secure: always
+  redirect_http_response_code: 301
+  script: auto
