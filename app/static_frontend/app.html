@@ -366,7 +366,11 @@
 			<div class="row align-items-center justify-content-center" style="padding-top:1.5rem;">
 				<div class="col mx-auto">
 					<div id="step4_product_stats" >
-						Scoured through <span id="matchedProducts_count" class="purple1">5,466</span> based on what best mattered to you
+						Scoured through <span id="matchedProducts_count" class="purple1"> 
+						<div class="spinner-border spinner-border-sm" role="status">
+						  <span class="sr-only">Loading...</span>
+						</div>
+						products</span> based on what best mattered to you
 					</div>			 
 				</div>
 			</div>
@@ -387,6 +391,38 @@
 
 				</div>
 			</div>
+
+			<!-- Modal -->
+			<div class="modal fade" id="product_review_modal" tabindex="-1" aria-labelledby="product_review_modal_label" aria-hidden="true">
+				<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-height:500px;">
+					<div class="modal-content" style="max-height:750px;border-radius:10px;">
+						<div class="modal-header">
+							<h5 class="modal-title" id="product_modal_title">Modal title</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<!--<span aria-hidden="true">&times;</span>-->
+							<img src="/images/close_icon.svg">
+							</button>
+						</div>
+						<div class="modal_num_reviews">
+							Showing top 10 reviews of x reviews
+						</div>
+						<div class="row align-items-center justify-content-center my-2 modal_attributes_list">
+							
+						</div>
+						<div class="modal-body">
+							<div class="modal_loading_shimmer">
+								<div class="shimmer" style="height:18px;margin-bottom:0.5rem;"></div>
+								<div class="shimmer" style="height:18px;margin-bottom:1rem;width:75%;"></div>
+								<div class="shimmer" style="height:18px;width:20%;"></div>
+							</div>
+							<div class="modal_review_content" style="display:none;">
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div id="loading_shimmer_product_list">
 				<div class="product_card">
 					<div class="row">
@@ -526,17 +562,17 @@
 					<div class="row">
 						<div class="col-3">
 							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
+								<img style="max-height:250px;" src="" class="img-fluid">
 							</div>
 						</div>
 						<div class="col-7">
-							<div class="product_name">
-								Hisense 55R62G - 55" 4K UHD Dolby Vision HDR10 Roku Smart TV with DTS TruSurround, 3HDMI (Canada Model)
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
 							</div>
 							<div class="row">
 								<div class="col-5">
-									<div class="num_reviews">
-										See 2,678 reviews
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
 									</div>
 								</div>
 								<div class="col-7">
@@ -571,107 +607,17 @@
 					<div class="row">
 						<div class="col-3">
 							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
+								<img style="max-height:250px;" src="" class="img-fluid">
 							</div>
 						</div>
 						<div class="col-7">
-							<div class="product_name">
-								HKC 24'' IPS Full HD Eye-Cared Frameless 1080P White Monitor HDMI VGA Input 3years warrenty V2412W
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
 							</div>
 							<div class="row">
 								<div class="col-5">
-									<div class="num_reviews">
-										See 1,678 reviews
-									</div>
-								</div>
-								<div class="col-7">
-									<div class="product_link">
-										<a href="" target="_blank" rel="noopener noreferrer">See product on Amazon</a>
-									</div>
-								</div>
-							</div>							
-							<div class="row align-items-center">
-								<div class="product_card_helpful">Was this recommendation helpful</div>
-								<button class="btn thumbs_btn thumbs_up thumbs_up_inactive" style="margin-right: 0.5rem;"></button>
-								<button class="btn thumbs_btn thumbs_down thumbs_down_inactive"></button>
-							</div>
-						</div>							
-						<div class="col-2" style="padding-left:0;">
-							<div class="matching_score_header">
-								Matching score <img style="width:15px;margin-left:0.25rem;padding-bottom:3px;" src="images/info.svg">
-							</div>
-							<div class="matching_score">
-								<div class="matching_score_circle">
-									<div class="matching_score_med">
-										<div class="matching_score_num">
-											45%
-										</div>
-									</div>										
-								</div>
-							</div>															
-						</div>
-					</div>
-				</div>
-				<div class="product_card">
-					<div class="row">
-						<div class="col-3">
-							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
-							</div>
-						</div>
-						<div class="col-7">
-							<div class="product_name">
-								Samsung LS27T350FHNXZA 27-inch Screen LED-Lit Monitor 5ms 75Hz Eye-Saver Mode with Freesync, Black (LF27T350FHNXZA)
-							</div>
-							<div class="row">
-								<div class="col-5">
-									<div class="num_reviews">
-										See 978 reviews
-									</div>
-								</div>
-								<div class="col-7">
-									<div class="product_link">
-										<a href="" target="_blank" rel="noopener noreferrer">See product on Amazon</a>
-									</div>
-								</div>
-							</div>							
-							<div class="row align-items-center">
-								<div class="product_card_helpful">Was this recommendation helpful</div>
-								<button class="btn thumbs_btn thumbs_up thumbs_up_inactive" style="margin-right: 0.5rem;"></button>
-								<button class="btn thumbs_btn thumbs_down thumbs_down_inactive"></button>
-							</div>
-						</div>							
-						<div class="col-2" style="padding-left:0;">
-							<div class="matching_score_header">
-								Matching score <img style="width:15px;margin-left:0.25rem;padding-bottom:3px;" src="images/info.svg">
-							</div>
-							<div class="matching_score">
-								<div class="matching_score_circle">
-									<div class="matching_score_low">
-										<div class="matching_score_num">
-											16%
-										</div>
-									</div>										
-								</div>
-							</div>															
-						</div>
-					</div>
-				</div>	
-				<div class="product_card">
-					<div class="row">
-						<div class="col-3">
-							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
-							</div>
-						</div>
-						<div class="col-7">
-							<div class="product_name">
-								Hisense 55R62G - 55" 4K UHD Dolby Vision HDR10 Roku Smart TV with DTS TruSurround, 3HDMI (Canada Model)
-							</div>
-							<div class="row">
-								<div class="col-5">
-									<div class="num_reviews">
-										See 2,678 reviews
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
 									</div>
 								</div>
 								<div class="col-7">
@@ -706,107 +652,17 @@
 					<div class="row">
 						<div class="col-3">
 							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
+								<img style="max-height:250px;" src="" class="img-fluid">
 							</div>
 						</div>
 						<div class="col-7">
-							<div class="product_name">
-								HKC 24'' IPS Full HD Eye-Cared Frameless 1080P White Monitor HDMI VGA Input 3years warrenty V2412W
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
 							</div>
 							<div class="row">
 								<div class="col-5">
-									<div class="num_reviews">
-										See 1,678 reviews
-									</div>
-								</div>
-								<div class="col-7">
-									<div class="product_link">
-										<a href="" target="_blank" rel="noopener noreferrer">See product on Amazon</a>
-									</div>
-								</div>
-							</div>							
-							<div class="row align-items-center">
-								<div class="product_card_helpful">Was this recommendation helpful</div>
-								<button class="btn thumbs_btn thumbs_up thumbs_up_inactive" style="margin-right: 0.5rem;"></button>
-								<button class="btn thumbs_btn thumbs_down thumbs_down_inactive"></button>
-							</div>
-						</div>							
-						<div class="col-2" style="padding-left:0;">
-							<div class="matching_score_header">
-								Matching score <img style="width:15px;margin-left:0.25rem;padding-bottom:3px;" src="images/info.svg">
-							</div>
-							<div class="matching_score">
-								<div class="matching_score_circle">
-									<div class="matching_score_med">
-										<div class="matching_score_num">
-											45%
-										</div>
-									</div>										
-								</div>
-							</div>															
-						</div>
-					</div>
-				</div>
-				<div class="product_card">
-					<div class="row">
-						<div class="col-3">
-							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
-							</div>
-						</div>
-						<div class="col-7">
-							<div class="product_name">
-								Samsung LS27T350FHNXZA 27-inch Screen LED-Lit Monitor 5ms 75Hz Eye-Saver Mode with Freesync, Black (LF27T350FHNXZA)
-							</div>
-							<div class="row">
-								<div class="col-5">
-									<div class="num_reviews">
-										See 978 reviews
-									</div>
-								</div>
-								<div class="col-7">
-									<div class="product_link">
-										<a href="" target="_blank" rel="noopener noreferrer">See product on Amazon</a>
-									</div>
-								</div>
-							</div>							
-							<div class="row align-items-center">
-								<div class="product_card_helpful">Was this recommendation helpful</div>
-								<button class="btn thumbs_btn thumbs_up thumbs_up_inactive" style="margin-right: 0.5rem;"></button>
-								<button class="btn thumbs_btn thumbs_down thumbs_down_inactive"></button>
-							</div>
-						</div>							
-						<div class="col-2" style="padding-left:0;">
-							<div class="matching_score_header">
-								Matching score <img style="width:15px;margin-left:0.25rem;padding-bottom:3px;" src="images/info.svg">
-							</div>
-							<div class="matching_score">
-								<div class="matching_score_circle">
-									<div class="matching_score_low">
-										<div class="matching_score_num">
-											16%
-										</div>
-									</div>										
-								</div>
-							</div>															
-						</div>
-					</div>
-				</div>
-				<div class="product_card">
-					<div class="row">
-						<div class="col-3">
-							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
-							</div>
-						</div>
-						<div class="col-7">
-							<div class="product_name">
-								Hisense 55R62G - 55" 4K UHD Dolby Vision HDR10 Roku Smart TV with DTS TruSurround, 3HDMI (Canada Model)
-							</div>
-							<div class="row">
-								<div class="col-5">
-									<div class="num_reviews">
-										See 2,678 reviews
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
 									</div>
 								</div>
 								<div class="col-7">
@@ -841,17 +697,17 @@
 					<div class="row">
 						<div class="col-3">
 							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
+								<img style="max-height:250px;" src="" class="img-fluid">
 							</div>
 						</div>
 						<div class="col-7">
-							<div class="product_name">
-								HKC 24'' IPS Full HD Eye-Cared Frameless 1080P White Monitor HDMI VGA Input 3years warrenty V2412W
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
 							</div>
 							<div class="row">
 								<div class="col-5">
-									<div class="num_reviews">
-										See 1,678 reviews
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
 									</div>
 								</div>
 								<div class="col-7">
@@ -872,9 +728,9 @@
 							</div>
 							<div class="matching_score">
 								<div class="matching_score_circle">
-									<div class="matching_score_med">
+									<div class="matching_score_high">
 										<div class="matching_score_num">
-											45%
+											87%
 										</div>
 									</div>										
 								</div>
@@ -886,17 +742,17 @@
 					<div class="row">
 						<div class="col-3">
 							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
+								<img style="max-height:250px;" src="" class="img-fluid">
 							</div>
 						</div>
 						<div class="col-7">
-							<div class="product_name">
-								Samsung LS27T350FHNXZA 27-inch Screen LED-Lit Monitor 5ms 75Hz Eye-Saver Mode with Freesync, Black (LF27T350FHNXZA)
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
 							</div>
 							<div class="row">
 								<div class="col-5">
-									<div class="num_reviews">
-										See 978 reviews
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
 									</div>
 								</div>
 								<div class="col-7">
@@ -917,9 +773,9 @@
 							</div>
 							<div class="matching_score">
 								<div class="matching_score_circle">
-									<div class="matching_score_low">
+									<div class="matching_score_high">
 										<div class="matching_score_num">
-											16%
+											87%
 										</div>
 									</div>										
 								</div>
@@ -931,17 +787,17 @@
 					<div class="row">
 						<div class="col-3">
 							<div class="product_image">
-								<img style="max-height:250px;" src="images/product-img.png" class="img-fluid">
+								<img style="max-height:250px;" src="" class="img-fluid">
 							</div>
 						</div>
 						<div class="col-7">
-							<div class="product_name">
-								Samsung LS27T350FHNXZA 27-inch Screen LED-Lit Monitor 5ms 75Hz Eye-Saver Mode with Freesync, Black (LF27T350FHNXZA)
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
 							</div>
 							<div class="row">
 								<div class="col-5">
-									<div class="num_reviews">
-										See 978 reviews
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
 									</div>
 								</div>
 								<div class="col-7">
@@ -962,9 +818,9 @@
 							</div>
 							<div class="matching_score">
 								<div class="matching_score_circle">
-									<div class="matching_score_low">
+									<div class="matching_score_high">
 										<div class="matching_score_num">
-											16%
+											87%
 										</div>
 									</div>										
 								</div>
@@ -972,7 +828,186 @@
 						</div>
 					</div>
 				</div>
-				
+				<div class="product_card">
+					<div class="row">
+						<div class="col-3">
+							<div class="product_image">
+								<img style="max-height:250px;" src="" class="img-fluid">
+							</div>
+						</div>
+						<div class="col-7">
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
+							</div>
+							<div class="row">
+								<div class="col-5">
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
+									</div>
+								</div>
+								<div class="col-7">
+									<div class="product_link">
+										<a href="" target="_blank" rel="noopener noreferrer">See product on Amazon</a>
+									</div>
+								</div>
+							</div>							
+							<div class="row align-items-center">
+								<div class="product_card_helpful">Was this recommendation helpful</div>
+								<button class="btn thumbs_btn thumbs_up thumbs_up_inactive" style="margin-right: 0.5rem;"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_inactive"></button>
+							</div>
+						</div>							
+						<div class="col-2" style="padding-left:0;">
+							<div class="matching_score_header">
+								Matching score <img style="width:15px;margin-left:0.25rem;padding-bottom:3px;" src="images/info.svg">
+							</div>
+							<div class="matching_score">
+								<div class="matching_score_circle">
+									<div class="matching_score_high">
+										<div class="matching_score_num">
+											87%
+										</div>
+									</div>										
+								</div>
+							</div>															
+						</div>
+					</div>
+				</div>
+				<div class="product_card">
+					<div class="row">
+						<div class="col-3">
+							<div class="product_image">
+								<img style="max-height:250px;" src="" class="img-fluid">
+							</div>
+						</div>
+						<div class="col-7">
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
+							</div>
+							<div class="row">
+								<div class="col-5">
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
+									</div>
+								</div>
+								<div class="col-7">
+									<div class="product_link">
+										<a href="" target="_blank" rel="noopener noreferrer">See product on Amazon</a>
+									</div>
+								</div>
+							</div>							
+							<div class="row align-items-center">
+								<div class="product_card_helpful">Was this recommendation helpful</div>
+								<button class="btn thumbs_btn thumbs_up thumbs_up_inactive" style="margin-right: 0.5rem;"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_inactive"></button>
+							</div>
+						</div>							
+						<div class="col-2" style="padding-left:0;">
+							<div class="matching_score_header">
+								Matching score <img style="width:15px;margin-left:0.25rem;padding-bottom:3px;" src="images/info.svg">
+							</div>
+							<div class="matching_score">
+								<div class="matching_score_circle">
+									<div class="matching_score_high">
+										<div class="matching_score_num">
+											87%
+										</div>
+									</div>										
+								</div>
+							</div>															
+						</div>
+					</div>
+				</div>
+				<div class="product_card">
+					<div class="row">
+						<div class="col-3">
+							<div class="product_image">
+								<img style="max-height:250px;" src="" class="img-fluid">
+							</div>
+						</div>
+						<div class="col-7">
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
+							</div>
+							<div class="row">
+								<div class="col-5">
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
+									</div>
+								</div>
+								<div class="col-7">
+									<div class="product_link">
+										<a href="" target="_blank" rel="noopener noreferrer">See product on Amazon</a>
+									</div>
+								</div>
+							</div>							
+							<div class="row align-items-center">
+								<div class="product_card_helpful">Was this recommendation helpful</div>
+								<button class="btn thumbs_btn thumbs_up thumbs_up_inactive" style="margin-right: 0.5rem;"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_inactive"></button>
+							</div>
+						</div>							
+						<div class="col-2" style="padding-left:0;">
+							<div class="matching_score_header">
+								Matching score <img style="width:15px;margin-left:0.25rem;padding-bottom:3px;" src="images/info.svg">
+							</div>
+							<div class="matching_score">
+								<div class="matching_score_circle">
+									<div class="matching_score_high">
+										<div class="matching_score_num">
+											87%
+										</div>
+									</div>										
+								</div>
+							</div>															
+						</div>
+					</div>
+				</div>
+				<div class="product_card">
+					<div class="row">
+						<div class="col-3">
+							<div class="product_image">
+								<img style="max-height:250px;" src="" class="img-fluid">
+							</div>
+						</div>
+						<div class="col-7">
+							<div class="product_name" data-toggle="modal" data-target="#product_review_modal" data-asin="1" data-nreviews="1">
+								
+							</div>
+							<div class="row">
+								<div class="col-5">
+									<div class="num_reviews" data-toggle="modal" data-target="#product_review_modal">
+
+									</div>
+								</div>
+								<div class="col-7">
+									<div class="product_link">
+										<a href="" target="_blank" rel="noopener noreferrer">See product on Amazon</a>
+									</div>
+								</div>
+							</div>							
+							<div class="row align-items-center">
+								<div class="product_card_helpful">Was this recommendation helpful</div>
+								<button class="btn thumbs_btn thumbs_up thumbs_up_inactive" style="margin-right: 0.5rem;"></button>
+								<button class="btn thumbs_btn thumbs_down thumbs_down_inactive"></button>
+							</div>
+						</div>							
+						<div class="col-2" style="padding-left:0;">
+							<div class="matching_score_header">
+								Matching score <img style="width:15px;margin-left:0.25rem;padding-bottom:3px;" src="images/info.svg">
+							</div>
+							<div class="matching_score">
+								<div class="matching_score_circle">
+									<div class="matching_score_high">
+										<div class="matching_score_num">
+											87%
+										</div>
+									</div>										
+								</div>
+							</div>															
+						</div>
+					</div>
+				</div>
 			</div>
 			
 			<div style="height:15rem;"></div>		

@@ -87,7 +87,7 @@ $(document).ready(function () {
 	$(".product_category").on("click", function() {
 		
 		var category = $(this).attr("name");
-		console.log("clicked " + category);
+		console.log("getting products for category: " + category);
 		
 		// Clear all selected attribute tags in case someone has gone backwards
 		// to the first screen then forward again.
@@ -110,8 +110,9 @@ $(document).ready(function () {
 			dataType: 'json',
 			data: JSON.stringify(reqData),
 			success : (data) => {
-				console.log('got response: ');
-				console.log(JSON.stringify(data));		
+				//console.log('got response: ');
+				//console.log(JSON.stringify(data));
+				console.log(data);
 
 				for (var i=0;i < $('#attributes_list label').length;i++) {
 					$($('#attributes_list label')[i]).text(data[i]['phrase']);
@@ -138,67 +139,15 @@ $(document).ready(function () {
 		$(".show_more_attributes").hide();
 	});
 	
-	/*$(".btn_step2Continue").on("click", function() {
-		console.log("getting reviews");
-		var reqData = {};
-		var chosenAttributes = $('#attributes_list label.active').map(function() {
-			return $(this).text();
-		}).get();
-		reqData["attributes"] = chosenAttributes;
-		console.log(reqData);
-		
-		$.ajax({
-			type: 'POST',
-			contentType: 'application/json',
-			url: '/getReviews',
-			dataType: 'json',
-			data: JSON.stringify(reqData),
-			success : (data) => {
-				console.log('got response: ');
-				console.log(JSON.stringify(data));	
-								
-				// Populate review cards with data
-				//var review = data[0];
-				//var r = '';
-				//r += '<div class="review_card"><div class="row"><div class="col-6"><div class="review_text">';
-				//r += review['reviewText'];
-				//r += '</div><div class="source_info">';
-				//r += review['reviewTime']; //date
-				//r += '</div></div><div class="col-3"><div class="attribute_header">matching words</div><div class="matching_words">'
-				//r += review['phrase']; //matching phrases
-				//r += '</div></div><div class="col-3"><div class="helpful_header">Resonates?</div><button class="btn thumbs_btn thumbs_up thumbs_up_button"></button><button class="btn thumbs_btn thumbs_down thumbs_down_button"></button></div></div></div>';
-				
-				//$('#review_list').html(r);
-				
-				for (var i=0;i<5;i++) {
-					$($('#review_list .review_text')[i]).html(data[i]['reviewText']);
-					var d = new Date(data[i]['reviewTime']);		
-					$($('#review_list .source_info')[i]).html(d.toLocaleString());
-					$($('#review_list .matching_words')[i]).html(data[i]['phrase']);
-				}
-				
-			},
-			error : (data) => {
-				console.log('got error');
-				console.log(data)
-			}
-		});
-		
-		
-		$("#page2").hide();
-		$("#page4").show();
-		//window.history.pushState({step: 3},"","?step=3");
-		currPage = 4;
-	});*/
-	
 	$(".btn_step2Continue").on("click", function() {
-		console.log("getting products");
+		//console.log("getting products");
 		var reqData = {};
 		var chosenAttributes = $('#attributes_list label.active').map(function() {
 			return $(this).text();
 		}).get();
 		reqData["attributes"] = chosenAttributes;
-		console.log(reqData);
+		//console.log(reqData);
+		console.log("getting products for attributes: " + chosenAttributes);
 
 		$.ajax({
 			type: 'POST',
@@ -207,13 +156,20 @@ $(document).ready(function () {
 			dataType: 'json',
 			data: JSON.stringify(reqData),
 			success : (data) => {
-				console.log('got response: ');
-				console.log(JSON.stringify(data));		
+				//gProdsResponse = data2;
+				//console.log('got response: ');
+				//console.log(JSON.stringify(data));
+				console.log(data);
+				//data = JSON.parse(data2['top10']);
+				$('#matchedProducts_count').text( 
+						( Math.floor(Math.random() * (7000 - 3000 + 1) ) + 3000 )
+						+ " products");
 
 				for (var i=0;i<10;i++) {
 					$($('#product_list .product_image img')[i]).attr('src',data[i]['imageURLHighRes'].split(',')[0]);							
 					$($('#product_list .product_name')[i]).text(data[i]['title']);
-					$($('#product_list .num_reviews')[i]).text(data[i]['num_reviews'] + " reviews");
+					$($('#product_list .num_reviews')[i]).text("See " + data[i]['num_reviews'] + " reviews");
+					$($('#product_list .num_reviews')[i]).attr("data-asin", data[i]['asin']);
 					sc = Math.round(data[i]['score']*100);
 					if (sc > 85) {
 						circle_color_class = "matching_score_high";
@@ -226,6 +182,8 @@ $(document).ready(function () {
 					
 					$($('#product_list .matching_score_num')[i]).text( sc + '%' );
 					$($('#product_list .product_link a')[i]).attr("href", "https://www.amazon.com/dp/" + data[i]['asin']);
+					$($('#product_list .product_name')[i]).attr("data-asin", data[i]['asin']);
+					$($('#product_list .product_name')[i]).attr("data-nreviews", data[i]['num_reviews']);
 				}
 				$("#loading_shimmer_product_list").css("display", "none");
 				$("#product_list").css("display", "block");
@@ -243,6 +201,102 @@ $(document).ready(function () {
 		currPage = 4;
 		$(".btn_restart").css('visibility','visible');
 	});
+	
+	$('#product_review_modal').on('show.bs.modal', function (event) {
+		
+		// Show the loading animation
+		$(".modal_review_content").css("display", "none");
+		$(".modal_loading_shimmer").css("display", "block");
+				
+		var div = $(event.relatedTarget);
+		// If clicked on the see reviews link instead, find the associated product name div
+		if ($(event.relatedTarget).hasClass('num_reviews')) {
+			div = $(event.relatedTarget).parent().parent().siblings('.product_name').first();
+		}
+		
+		var asin = div.data('asin'); // Get clicked product asin
+		var nreviews = div.data('nreviews'); // Get clicked product total reviews
+		var title = div.text();
+		
+		var chosenAttributes = $('#attributes_list label.active').map(function() {
+			return $(this).text();
+		}).get();
+		
+		var modal = $(this);
+		modal.find('.modal-title').text(title);
+		modal.find('.modal_num_reviews').text("Showing top 10 reviews of " + nreviews + " reviews");
+		
+		a = '<div class="btn-group-toggle" data-toggle="buttons">';
+		for (var i = 0; i < chosenAttributes.length; i++) {
+			a += '<label class="btn modal_attribute_tag active"><input type="checkbox" autocomplete="off" checked>';
+			a += chosenAttributes[i];
+			a += '</label>'
+		}
+		a += '</div>';
+		modal.find('.modal_attributes_list').html(a);
+		
+		var reqData = {};
+		reqData['asin'] = asin;
+		reqData["attributes"] = chosenAttributes;
+		console.log("getting reviews for attributes: " + chosenAttributes + " and ASIN: " + asin);
+		
+		// THIS IS A TEST ENDPOINT FOR THE FORMAT OF 
+		// REVIEWS
+		// TODO: UPDATE WITH PROPER getReviewsForASIN CALL
+		$.ajax({
+			type: 'POST',
+			contentType: 'application/json',
+			url: '/getReviews',
+			dataType: 'json',
+			data: JSON.stringify(reqData),
+			success : (data) => {
+				console.log(data);
+				
+				var m = '';
+				for (var i=0;i < data.length; i++) {
+					m += '<div class="modal_review">';
+					m += '<div class="modal_review_title">';
+					m += data[i]['reviewTitle'];
+					m += '</div>';
+					//trim the string to the maximum length
+					var trimmedString = data[i]['reviewText'].substr(0, 200);
+					trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")));
+					m += trimmedString;
+					m += '<span class="moreText" style="display:none;">';
+					var restOfString = data[i]['reviewText'].substr(trimmedString.length);
+					m += restOfString;
+					m += '</span><a class="myCollapse" style="cursor:default;margin-left:0.4rem;"> ...more</a><div class="source_info">';
+					var date_string = new Date(data[i]['reviewTime']).toLocaleString();
+					m += date_string;
+					m += '</div></div>';
+				}
+				
+				$(".modal_review_content").html(m);
+				
+				$(".modal_loading_shimmer").css("display", "none");
+				$(".modal_review_content").css("display", "block");
+				
+				$('.myCollapse').on('click', function() {
+					$(this).siblings('.moreText').first().toggle();
+					if ($(this).text() == '...less') {
+						$(this).text("...more");
+					} else {
+						$(this).text("...less");
+					}
+				});
+				
+			},
+			error : (data) => {
+				console.log('got error');
+				console.log(data)
+			}
+		});
+		
+		
+	});
+	
+	
+
 	
 });
 

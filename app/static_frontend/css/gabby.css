@@ -117,6 +117,34 @@ body {
 	color: #50448A;
 }
 
+.modal_attribute_tag {
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 16px;
+	color: #000000;
+	background-color: #FFFFFF;
+	padding: 0.6rem 1.5rem;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: 2rem;
+	margin-left: 0.2rem;
+	margin-right: 0.2rem;
+}
+
+.modal_attribute_tag:focus {
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.modal_attribute_tag.focus {
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.modal_attribute_tag.active {
+	border: 3px solid #50448A;
+	color: #50448A;
+}
+
+
 
 .show_more_attributes {
 	font-family: 'Poppins';
@@ -204,8 +232,8 @@ body {
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: 700;
-	font-size: 18px;
-	line-height: 23px;
+	font-size: 16px;
+	line-height: 30px;
 	letter-spacing: -0.02em;
 	color: #929094;
 	margin-top: 1rem;
@@ -457,6 +485,60 @@ body {
 	color: #000000;
 	margin-top: 0.5rem;
 	margin-bottom: 1rem;
+	cursor:pointer;
+}
+
+.modal-title {
+	text-align:left;
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 30px;
+	letter-spacing: -0.02em;
+	color: #000000;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+.modal_num_reviews {
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 30px;
+	letter-spacing: -0.02em;
+	color: #50448A;
+	margin-bottom: 1rem;
+	margin-top: 1rem;
+}
+.modal-header .close {
+	margin:0;
+	margin-left:0.5rem;
+}
+.close {
+	opacity: 1.0;
+}
+.close:not(:disabled):not(.disabled):hover {
+	opacity: 1.0;
+}
+
+.modal-body {
+	margin: 1rem 4rem;
+	padding: 1rem;
+	border-top: 1px solid #dee2e6;
+	text-align: left;
+}
+
+.modal_review {
+	border-bottom: 1px solid #dee2e6;
+	margin-bottom: 0.5rem;
+}
+
+.modal_review_title {
+	margin-bottom: 0.5rem;
+	font-size: 22px;
+	line-height: 30px;
 }
 
 .num_reviews {
@@ -473,6 +555,7 @@ body {
 	background-clip: text;
 	text-fill-color: transparent;
 	margin-bottom: 1rem;
+	cursor:pointer;
 }
 
 .product_link {
@@ -547,6 +630,7 @@ body {
   background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
   background-repeat: no-repeat;
   animation : shim infinite 1.2s linear;
+  border-radius: 1rem;
 }
 @keyframes shim {
   0% { background-position: -468px 0;}

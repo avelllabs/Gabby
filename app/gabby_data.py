@@ -94,7 +94,7 @@ def get_attributes_list():
     return attributes_filtered[['key_phrase_id', 'phrase']].sample(50)
 
 
-def get_reviews_for_attributes(query_attributes):
+def get_reviews_for_attributes_and_asin(query_attributes, asin):
     phrase_ids_query = \
     f'''SELECT key_phrase_id, phrase 
         FROM key_phrase_root 
@@ -114,7 +114,7 @@ def get_reviews_for_attributes(query_attributes):
     review_ids_for_query = review_ids_for_query.merge(query_phrases, on='key_phrase_id', how='left')
     review_ids_for_query = review_ids_for_query.groupby('review_id')['phrase'].apply(list).reset_index()
     review_ids_for_query['n_matches'] = review_ids_for_query['phrase'].apply(len)
-    top_matched_reviews = review_ids_for_query.sort_values('n_matches', ascending=False).head(25)
+    top_matched_reviews = review_ids_for_query.sort_values('n_matches', ascending=False).head(10)
 
     fetch_matched_reviews_query = \
     f'''SELECT *
@@ -201,6 +201,7 @@ def get_products_for_attributes(attribute_list):
     prod_attr_prby['score'] = prod_attr_prby[[c for c in prod_attr_prby.columns if c.endswith('score_level')]].mean(axis=1) * prod_attr_prby['total_perc_rank']
     
     top10_products = prod_attr_prby.sort_values('score', ascending=False).head(10)
+    num_prods = prod_attr_prby.shape[0]
     
     fetch_matched_products_query = \
         f'''SELECT bp.*, br.num_reviews
@@ -217,7 +218,7 @@ def get_products_for_attributes(attribute_list):
     recommended_list = matched_products.merge(top10_products[['asin', 'score', 'total_perc_rank'] + \
                         [c for c in top10_products.columns if c.endswith('_score_level')]]).sort_values('score', ascending=False)
     
-    return recommended_list
+    return recommended_list, num_prods
     
     
     

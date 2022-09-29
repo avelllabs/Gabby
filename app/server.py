@@ -40,8 +40,18 @@ def get_products():
         print("Error - no attributes in request")
         return json.dumps({"success": False, "message": "no attributes in request"})
         
-    products = gabby_data.get_products_for_attributes(args['attributes'])
-    return products.to_json(orient='records')
+    products_top10, num_prods = gabby_data.get_products_for_attributes(args['attributes'])
+    #return {'num_prods':num_prods, 'top10': products_top10.to_json(orient='records')}
+    return products_top10.to_json(orient='records')
+
+@app.route('/getReviews', methods=['POST'])
+def get_reviews():
+    print('get_reviews')
+    
+    args = request.get_json()  
+    
+    reviews = gabby_data.get_reviews_for_attributes_and_asin(args['attributes'], args['asin'])
+    return reviews.to_json(orient='records')
 
 if __name__ == '__main__':
     app.run(threaded=True, port=5000)
