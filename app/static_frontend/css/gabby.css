@@ -15,6 +15,12 @@
 	
 	--low_score_gradient: url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 175 175' fill='none' transform='translate(11 11)' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='5' y='5' width='140' height='140' rx='70' fill='white' stroke='url(%23paint0_linear_173_2934)' stroke-width='10'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_173_2934' x1='75' y1='0' x2='75' y2='143.919' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23FEC865'/%3E%3Cstop offset='0.0001' stop-color='%23FFEECF'/%3E%3Cstop offset='0.691277' stop-color='%23FFB89A'/%3E%3Cstop offset='1' stop-color='%23FFA077'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E");
 	
+	--high_score_modal_gradient: url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 300 300' fill='none' transform='translate(11 11)' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='5' y='5.5' width='140' height='140' rx='70' fill='white' stroke='url(%23paint0_linear_173_2928)' stroke-width='10'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_173_2928' x1='75' y1='0.5' x2='75' y2='144.419' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23FEB865'/%3E%3Cstop offset='0.348958' stop-color='%23FF9B70'/%3E%3Cstop offset='1' stop-color='%23CB1717'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E");
+	
+	--med_score_modal_gradient: url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 300 300' fill='none' transform='translate(11 11)' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='5' y='5' width='140' height='140' rx='70' fill='white' stroke='url(%23paint0_linear_173_2931)' stroke-width='10'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_173_2931' x1='75' y1='0' x2='75' y2='143.919' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23FEC865'/%3E%3Cstop offset='0.691277' stop-color='%23FF9B70'/%3E%3Cstop offset='1' stop-color='%23FF570F'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E");
+	
+	--low_score_modal_gradient: url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 300 300' fill='none' transform='translate(11 11)' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='5' y='5' width='140' height='140' rx='70' fill='white' stroke='url(%23paint0_linear_173_2934)' stroke-width='10'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_173_2934' x1='75' y1='0' x2='75' y2='143.919' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23FEC865'/%3E%3Cstop offset='0.0001' stop-color='%23FFEECF'/%3E%3Cstop offset='0.691277' stop-color='%23FFB89A'/%3E%3Cstop offset='1' stop-color='%23FFA077'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E");
+	
 }
 
 body {
@@ -623,6 +629,109 @@ body {
 	text-align: center;
 	vertical-align:middle;
 	display:table-cell;
+}
+
+.matching_score_modal_title {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 900;
+	font-size: 36px;
+	line-height: 36px;
+	letter-spacing: -0.02em;
+	color: #50448A;
+	margin-top: 1rem;
+	border-bottom:0;
+}
+
+.matching_score_modal_body {
+	margin: 1rem 1rem;
+	
+	border-top: 1px solid #dee2e6;
+	border-bottom: 1px solid #dee2e6;
+	text-align: left;
+	
+}
+.matching_score_modal_body_attributescores {
+	margin: 1rem 1rem;
+	margin-top: 0;
+	text-align: left;
+	
+}
+
+.matching_score_modal_body_heading {
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 24px;
+	letter-spacing: -0.02em;
+	color: #50448A;
+	text-align: left;
+}
+
+.matching_score_modal_high {
+	height: 100px;
+	width: 100px;
+	display: inline-block;
+	background-image: var(--high_score_modal_gradient);
+}
+.matching_score_modal_med {
+	height: 100px;
+	width: 100px;
+	display: inline-block;
+	background-image: var(--med_score_modal_gradient);
+}
+.matching_score_modal_low {
+	height: 100px;
+	width: 100px;
+	display: inline-block;
+	background-image: var(--low_score_modal_gradient);
+}
+
+.matching_score_modal_num {
+	height: 100px;
+	width: 100px;
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 27px;
+	line-height: 28px;
+	text-align: center;
+	vertical-align:middle;
+	display:table-cell;
+}
+
+.product_matchingscore_modal_subheading {
+	text-align:left;
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: -0.02em;
+	color: #000000;
+	padding-left: 1rem;
+}
+
+.product_matchingscore_modal_attribute_label {
+	text-align:left;
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: -0.02em;
+	color: #000000;
+}
+.product_matchingscore_modal_attribute_value {
+	text-align:left;
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: -0.02em;
+	color: #50448A;
 }
 
 .shimmer {

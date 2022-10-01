@@ -184,6 +184,19 @@ $(document).ready(function () {
 					$($('#product_list .product_link a')[i]).attr("href", "https://www.amazon.com/dp/" + data[i]['asin']);
 					$($('#product_list .product_name')[i]).attr("data-asin", data[i]['asin']);
 					$($('#product_list .product_name')[i]).attr("data-nreviews", data[i]['num_reviews']);
+					
+					// we need to find the list of attributes again. unsure if response will be in same order
+					var attributes = [];
+					var attrscores = [];
+					for (var key of Object.keys(data[i])) {
+						if (key.endsWith('_score_level') ) {
+							attributes.push(key.slice(0, -12));
+							attrscores.push(data[i][key]);
+						}
+					}
+					$($('#product_list .matching_score_header img')[i]).attr("data-matchingscore", sc);
+					$($('#product_list .matching_score_header img')[i]).attr("data-selectedattributes", attributes.toString());
+					$($('#product_list .matching_score_header img')[i]).attr("data-attributescores", attrscores.toString());
 				}
 				$("#loading_shimmer_product_list").css("display", "none");
 				$("#product_list").css("display", "block");
@@ -202,6 +215,49 @@ $(document).ready(function () {
 		$(".btn_restart").css('visibility','visible');
 	});
 	
+	$('#product_matchingscore_modal').on('show.bs.modal', function (event) {
+		var div = $(event.relatedTarget);
+		var matchingscore = div.data('matchingscore');
+		var matchinglevel = div.data('matchinglevel');
+		var selectedattributes = div.data('selectedattributes').split(',');
+		var attributescores = div.data('attributescores').split(',');
+		var modal = $(this);		
+		
+		if (matchingscore > 85) {
+			circle_color_class = "matching_score_modal_high";
+		} else if (matchingscore > 50) {
+			circle_color_class = "matching_score_modal_med";
+		} else {
+			circle_color_class = "matching_score_modal_low";
+		}
+		modal.find('.matching_score_modal_circle').children().eq(0).removeClass('matching_score_modal_high').removeClass('matching_score_modal_med').removeClass('matching_score_modal_low').addClass(circle_color_class);
+		
+		modal.find('.matching_score_modal_num').text(matchingscore + "%");
+		
+		var attr_score_text = '<div class="col" style="margin-right:0.5rem;">';
+		for (var i = 0; i < Math.ceil(selectedattributes.length/2); i++) {
+			attr_score_text += '<div class="row justify-content-between"><div class="product_matchingscore_modal_attribute_label">';
+			attr_score_text += selectedattributes[i];
+			attr_score_text += '</div><div class="product_matchingscore_modal_attribute_value">';
+			attr_score_text += Math.round(attributescores[i]*100);
+			attr_score_text += '%</div></div>';
+		}
+		attr_score_text += '</div>';
+		attr_score_text += '<div class="col" style="margin-right:0.5rem;">';
+		for (var i = Math.ceil(selectedattributes.length/2); i < selectedattributes.length; i++) {
+			attr_score_text += '<div class="row justify-content-between"><div class="product_matchingscore_modal_attribute_label">';
+			attr_score_text += selectedattributes[i];
+			attr_score_text += '</div><div class="product_matchingscore_modal_attribute_value">';
+			attr_score_text += Math.round(attributescores[i]*100);
+			attr_score_text += '%</div></div>';
+		}
+		attr_score_text += '</div>';
+		
+		modal.find('.matching_score_modal_body_attributescores').html(attr_score_text);
+		
+	});
+
+
 	$('#product_review_modal').on('show.bs.modal', function (event) {
 		
 		// Show the loading animation
