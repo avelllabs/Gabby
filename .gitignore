@@ -1,0 +1,4 @@
+
+app/.gcloudignore
+app/__pycache__/
+app/databases/gabbydb.sqlite
