@@ -294,6 +294,7 @@ $(document).ready(function () {
 		var reqData = {};
 		reqData['asin'] = asin;
 		reqData["attributes"] = chosenAttributes;
+		// TODO: reqData['sentiment'] = null;
 		console.log("getting reviews for attributes: " + chosenAttributes + " and ASIN: " + asin);
 		
 		// THIS IS A TEST ENDPOINT FOR THE FORMAT OF 

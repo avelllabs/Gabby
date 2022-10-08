@@ -50,7 +50,9 @@ def get_reviews():
     
     args = request.get_json()  
     
-    reviews = gabby_data.get_reviews_for_attributes_and_asin(args['attributes'], args['asin'])
+    reviews = gabby_data.get_reviews_for_attributes_and_asin(args['attributes'], 
+                                                                args['asin'], 
+                                                                args['sentiment'] if 'sentiment' in args else None)
     return reviews.to_json(orient='records')
 
 if __name__ == '__main__':

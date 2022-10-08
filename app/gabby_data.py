@@ -94,7 +94,30 @@ def get_attributes_list():
     return attributes_filtered[['key_phrase_id', 'phrase']].sample(50)
 
 
-def get_reviews_for_attributes_and_asin(query_attributes, asin):
+def get_reviews_for_attributes_and_asin(query_attributes, asin, sentiment=None):
+    """
+    Returns reviews for selected attributes, for a specific asin, for an optionally specified sentiment
+
+    Parameters
+    ----------
+    query_attributes : array_like
+        attributes provided
+    asin : string
+        asin or product unique identifier
+    sentiment : string
+        either 'positive' or 'negative'. default = None
+
+    Returns
+    -------
+    dataframe
+        a dataframe of matched reviews that satisfy constraints as specified by the function parameters
+
+    Raises
+    ------
+    
+    """
+
+
     phrase_ids_query = \
     f'''SELECT key_phrase_id, phrase 
         FROM key_phrase_root 
@@ -116,6 +139,9 @@ def get_reviews_for_attributes_and_asin(query_attributes, asin):
     review_ids_for_query['n_matches'] = review_ids_for_query['phrase'].apply(len)
     #top_matched_reviews = review_ids_for_query.sort_values('n_matches', ascending=False).head(10)
 
+    
+    # TODO: we may decided to build a version of this function with an optional asin (first iteration)
+    
     fetch_matched_reviews_query = \
     f'''SELECT *
         FROM baseline_reviews
@@ -126,6 +152,10 @@ def get_reviews_for_attributes_and_asin(query_attributes, asin):
     '''
     matched_reviews = pd.read_sql(fetch_matched_reviews_query, conn)
     matched_reviews = matched_reviews.merge(review_ids_for_query, on='review_id', how='left')
+
+    if sentiment:
+        matched_reviews = matched_reviews[matched_reviews['sentiment'] == sentiment]
+
     return matched_reviews
 
     
