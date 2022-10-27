@@ -1,4 +1,3 @@
-from soupsieve import match
 import pandas as pd
 import numpy as np
 import configparser
@@ -8,6 +7,8 @@ import db_utils
 # Either GCP Cloud SQL from App Engine, or bundled SQLite, or public IP Postgres
 config = configparser.ConfigParser()
 config.read('db_config.ini')    
+
+print(f'WARNING: db_profile set to {config['database_config']['db_profile']} in db_config.ini!')
 
 if config['database_config']['db_profile'] == 'gcp_couldsql_internal':
     conn = db_utils.connect_with_connector(config['gcp_couldsql_internal']['DB_USER'],
