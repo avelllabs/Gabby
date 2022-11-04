@@ -1,0 +1,157 @@
+
+.masthead {
+	background-color: #eae7fa;
+	background-image: url(../images/people/1.png), url(../images/people/2.png), url(../images/people/3.png), url(../images/people/4.png), url(../images/people/5.png), url(../images/people/6.png);
+	background-repeat: no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat;
+	background-position: top 69% left 20%, top 58% left 88%, top 17% left 26%, top 40% left 03%, top 88% left 92%, top 26% left 92%;
+	/* top 69% left 20%, top 50% left 84%, top 17% left 26%, top 40% left 8%, top 75% left 86%, top 26% left 92%; */
+	background-size: 9%, 13%, 5%, 11%, 7%, 7%;
+}
+.top-section {
+	background-color: #eae7fa;
+}
+.bottom-section {
+	background-color: #eae7fa;
+}
+
+.headline {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 900;
+	font-size: 5.8rem;
+	line-height: 73px;
+	text-align: center;
+	color: #50448A;	 
+	max-width: 54rem;
+	margin: 0 auto;
+}
+
+.subheading {
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 31px;
+	text-align: center;
+	color: #7567C5;
+	max-width: 40rem;
+	margin: 0 auto;
+}
+
+.btn_launchapp {
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 24px;
+	color: #FFFFFF;
+	border-radius: 2rem;
+	background-color: #FFFFFF;
+	padding: 1rem 1.6rem;
+	background: linear-gradient(239.93deg, #723CDC 35.48%, #1F0650 95.99%);
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.btn_launchapp:hover {
+	color: #FFFFFF;
+}
+.btn_launchapp.focus {
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.btn_launchapp:focus {
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.section_heading {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 900;
+	font-size: 36px;
+	line-height: 44px;
+	color: #50448A;
+}
+
+.section_text {
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 31px;
+	color: #0E0F11;
+}
+
+.attribute_tag {
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 24px;
+	color: #000000;
+	background-color: #FFFFFF;
+	padding: 1.1rem 2rem;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: 2rem;
+	margin-left: 0.2rem;
+	margin-right: 0.2rem;
+}
+
+.attribute_tag:focus {
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.attribute_tag.focus {
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.attribute_tag.active {
+	border: 3px solid #50448A;
+	color: #50448A;
+}
+
+.bottom_section_text {
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 23px;
+	color: #0E0F11;
+}
+
+.btn_submitemail {
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 24px;
+	color: #FFFFFF;
+	border-radius: 2rem;
+	background-color: #FFFFFF;
+	padding: 0.7rem 2rem;
+	background: linear-gradient(239.93deg, #723CDC 35.48%, #1F0650 95.99%);
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.btn_submitemail:hover {
+	color: #FFFFFF;
+}
+.btn_submitemail.focus {
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.btn_submitemail:focus {
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.attribute_tag.active {
+	border: 3px solid #50448A;
+	color: #50448A;
+}
+
+.subscribe_complete_box {
+	display:inline-block;
+	background: linear-gradient(239.93deg, #723CDC 35.48%, #1F0650 95.99%);
+	border-radius: 0.5rem;
+	padding: 1rem 3rem;
+	font-family: 'DM Sans';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 31px;
+	color: #FFFFFF;
+}
+
