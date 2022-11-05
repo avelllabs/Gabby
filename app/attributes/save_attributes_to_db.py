@@ -76,6 +76,7 @@ if __name__ == "__main__":
     key_phrases['category'] = args.category
     key_phrases['n_reviewers'] = key_phrases['reviewers'].apply(lambda r: len(r))
     key_phrases['n_reviews'] = key_phrases['reviews'].apply(lambda r: len(r))
+    key_phrases['n_products'] = key_phrases['products'].apply(lambda r: len(r))
 
     if_exists_setting = 'append'
     if args.create_tables: 
@@ -90,7 +91,7 @@ if __name__ == "__main__":
 
     key_phrases['key_phrase_id'] = [kid+start_kpid for kid in range(key_phrases.shape[0])]
     key_phrases = key_phrases.reset_index().rename(columns={'index': 'phrase'})[[ 
-        'key_phrase_id', 'phrase', 'reviews', 'reviewers', 'products', 'n_positive', 'n_negative', 'category'
+        'key_phrase_id', 'phrase', 'reviews', 'reviewers', 'products', 'n_positive', 'n_negative', 'n_reviewers', 'n_products', 'n_reviews', 'category'
     ]]
     print('Data frame ready', key_phrases.shape)
 
@@ -99,7 +100,7 @@ if __name__ == "__main__":
                             index=False, if_exists=if_exists_setting)
     print('key phrase root in DB')  
 
-    key_phrase_scores = key_phrases[['key_phrase_id', 'n_positive', 'n_negative']]
+    key_phrase_scores = key_phrases[['key_phrase_id', 'n_reviews', 'n_positive', 'n_negative', 'n_reviewers', 'n_products']]
     key_phrase_scores.to_sql('key_phrase_scores', con=conn, method='multi',
                             index=False, if_exists=if_exists_setting)
     print('key phrase scores in DB')
