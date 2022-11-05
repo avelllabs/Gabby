@@ -50,7 +50,7 @@ def get_category_pattern_strings(category):
     qprods = {
         'tv': ['TV', 'Television'], 
         'monitor': ['Monitor', 'inch'],
-        'headphone': ['Headphone', 'Headphones', 'Head phone', 'Head phones', 'head-phones', 'headset'],
+        'headphone': ['Headphone'], # , 'Headphones', 'Head phone', 'Head phones', 'head-phones', 'headset'],
         'mouse': ['Mouse'],
         'laptop': ['Laptop']
     }
