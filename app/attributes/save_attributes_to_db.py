@@ -25,7 +25,7 @@ config.read('../db_config.ini')
 
 conn = None
 
-def set_up_database_connection():
+def set_up_database_connection(use_psycopg2=False):
     global conn
     if config['database_config']['db_profile'] == 'gcp_couldsql_internal':
         conn = db_utils.connect_with_connector(config['gcp_couldsql_internal']['DB_USER'],
@@ -39,7 +39,8 @@ def set_up_database_connection():
         conn = db_utils.connect_with_conn_string(config[db_profile]['DB_USER'],
                                     config[db_profile]['DB_PASS'],
                                     config[db_profile]['HOSTNAME_PORT'],
-                                    config[db_profile]['DB_NAME'])
+                                    config[db_profile]['DB_NAME'],
+                                    use_psycopg2)
 
     print(f'''WARNING: db_profile set to "{config['database_config']['db_profile']}" in db_config.ini!''')
     return conn
@@ -59,7 +60,7 @@ if __name__ == "__main__":
 
     # setting up db connection
     if conn == None:
-        conn = set_up_database_connection()
+        conn = set_up_database_connection(use_psycopg2=True)
     
     # creating tmp dir
     tmp_dir = f"./tmp_dir_{args.category}"
@@ -91,12 +92,12 @@ if __name__ == "__main__":
     key_phrases = key_phrases.reset_index().rename(columns={'index': 'phrase'})[[ 
         'key_phrase_id', 'phrase', 'reviews', 'reviewers', 'products', 'n_positive', 'n_negative', 'category'
     ]]
-    print('Data frame ready')
+    print('Data frame ready', key_phrases.shape)
 
     key_phrase_root = key_phrases[['key_phrase_id', 'phrase', 'category']]
     key_phrase_root.to_sql('key_phrase_root', con=conn, method='multi',
                             index=False, if_exists=if_exists_setting)
-    print('key phrase root in DB')
+    print('key phrase root in DB')  
 
     key_phrase_scores = key_phrases[['key_phrase_id', 'n_positive', 'n_negative']]
     key_phrase_scores.to_sql('key_phrase_scores', con=conn, method='multi',
