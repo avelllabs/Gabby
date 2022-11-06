@@ -74,6 +74,19 @@ def gen_query_reviews_for_category(qpatterns, category):
         WHERE {pattern}) AS BP 
         WHERE BR.asin = BP.asin; '''
 
+
+    if category == 'headphone':
+        sql = '''
+            SELECT BR.*
+            FROM baseline_reviews BR,  
+            (SELECT asin
+                FROM baseline_products 
+                WHERE title ILIKE '%%headphones%%' 
+                AND (price ~ '\$[1-9][0-9][0-9].*' 
+                    OR price ~ '\$[5-9][0-9].*')) AS BP 
+            WHERE BR.asin = BP.asin
+        '''
+
     return sql
 
 
