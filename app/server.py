@@ -31,7 +31,7 @@ def get_attributes():
     
     args = request.get_json()  
     
-    attributes = gabby_data.get_attributes_list()
+    attributes = gabby_data.get_attributes_list_v2()
     return attributes.to_json(orient='records')
 
 

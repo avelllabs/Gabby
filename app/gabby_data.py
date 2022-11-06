@@ -48,6 +48,28 @@ def drop_numeric_phrases(df):
     return df[~df['phrase'].apply(lambda p: len(p.split()) == 1 and p.isnumeric())]
 
 
+def get_attributes_list_v2(category):
+    shortlisted_attributes_query = \
+        f'''
+        SELECT *
+        FROM shortlisted_attributes
+        WHERE category='{category}'
+        '''
+
+    n_qphrase_attrs=10
+    if category in ['laptop', 'tv', 'monitor']:
+        n_qphrase_attrs = 5
+    
+    shortlisted_attributes = pd.read_sql(shortlisted_attributes_query, conn)
+    sim_attrs_list = \
+        shortlisted_attributes. \
+            sort_values('neighbor_distances').sort_values('n_reviews', ascending=False). \
+                groupby('qphrase'). \
+                    head(n_qphrase_attrs). \
+                        reset_index(drop=True)[['key_phrase_id', 'phrase', 'qphrase']].sort_values('qphrase')
+    return sim_attrs_list[['key_phrase_id', 'phrase']].drop_duplicates().sample(50)
+
+
 def get_attributes_list():
     negative_attributes_query = \
     '''SELECT  P.key_phrase_id, P.phrase, S.n_positive, S.n_negative, S.reviewer_idf, S.n_reviews, S.n_reviewers
