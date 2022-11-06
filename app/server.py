@@ -10,10 +10,12 @@ app = Flask(__name__, static_folder='static_frontend', static_url_path='')
 @app.route('/')
 def landing_page():
     return app.send_static_file('index.html')
-    
+
+
 @app.route('/app')
 def launch_app():
     return app.send_static_file('app.html')
+
 
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
@@ -21,7 +23,8 @@ def subscribe():
     if request.method == 'POST':
         status = gabby_data.add_subscriber(request.form['email'], request.form['signup_date'])
     return status
-        
+
+
 @app.route('/getAttributes', methods=['POST'])
 def get_attributes():
     print('get_attributes')
@@ -30,7 +33,8 @@ def get_attributes():
     
     attributes = gabby_data.get_attributes_list()
     return attributes.to_json(orient='records')
-   
+
+
 @app.route('/getProducts', methods=['POST'])
 def get_products():
     print('get_products')
@@ -44,6 +48,7 @@ def get_products():
     #return {'num_prods':num_prods, 'top10': products_top10.to_json(orient='records')}
     return products_top10.to_json(orient='records')
 
+
 @app.route('/getReviews', methods=['POST'])
 def get_reviews():
     print('get_reviews')
@@ -54,6 +59,7 @@ def get_reviews():
                                                                 args['asin'], 
                                                                 args['sentiment'] if 'sentiment' in args else None)
     return reviews.to_json(orient='records')
+
 
 if __name__ == '__main__':
     app.run(threaded=True, port=5000)
