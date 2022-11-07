@@ -8,7 +8,7 @@ import db_utils
 config = configparser.ConfigParser()
 config.read('db_config.ini')    
 
-print(f'WARNING: db_profile set to {config['database_config']['db_profile']} in db_config.ini!')
+print(f'''WARNING: db_profile set to { config['database_config']['db_profile'] } in db_config.ini!''')
 
 if config['database_config']['db_profile'] == 'gcp_couldsql_internal':
     conn = db_utils.connect_with_connector(config['gcp_couldsql_internal']['DB_USER'],
