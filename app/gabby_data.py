@@ -50,7 +50,10 @@ def drop_numeric_phrases(df):
 
 def get_attributes_list_v2(category):
 
+    # basic checks
     category = category.lower()
+    if category.endswith('s'):
+        category = category[:-1]
 
     shortlisted_attributes_query = \
         f'''

@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, jsonify
 from flask_restful import reqparse
 
+from flask_cors import CORS
 import json
 import pandas as pd
 
@@ -9,30 +10,27 @@ import pandas as pd
 import gabby_data
 
 app = Flask(__name__, static_folder='static_frontend', static_url_path='')
+CORS(app)
 
-@app.route('/')
-def landing_page():
-    return app.send_static_file('index.html')
+# @app.route('/')
+# def landing_page():
+    # return app.send_static_file('index.html')
+    
+# @app.route('/app')
+# def launch_app():
+    # return app.send_static_file('app.html')
 
-
-@app.route('/app')
-def launch_app():
-    return app.send_static_file('app.html')
-
-
-@app.route('/subscribe', methods=['GET', 'POST'])
-def subscribe():
-    print('subscribe')
-    if request.method == 'POST':
-        status = gabby_data.add_subscriber(request.form['email'], request.form['signup_date'])
-    return status
-
-
+# @app.route('/subscribe', methods=['GET', 'POST'])
+# def subscribe():
+    # print('subscribe')
+    # if request.method == 'POST':
+        # status = gabby_data.add_subscriber(request.form['email'], request.form['signup_date'])
+    # return status
+        
 @app.route('/getAttributes', methods=['POST'])
 def get_attributes():
     print('get_attributes')
     
-
     parser = reqparse.RequestParser()
     parser.add_argument('category', help='category')
     args = parser.parse_args()
@@ -65,12 +63,23 @@ def get_reviews():
     
     args = request.get_json()  
     
-    reviews = gabby_data.get_reviews_for_attributes_and_asin(args['category'],
+    reviews = gabby_data.get_reviews_for_attributes_asin_sentiment_v2(args['category'],
                                                                 args['attributes'], 
                                                                 args['asin'], 
                                                                 args['sentiment'] if 'sentiment' in args else None)
     return reviews.to_json(orient='records')
 
 
+
+@app.route('/getCategories', methods=['GET'])
+def get_categories():
+    print('get_categories')
+
+    return jsonify(['headphone', 'tv', 'monitor', 'mouse', 'laptop'])
+
+
 if __name__ == '__main__':
     app.run(threaded=True, port=5000)
+
+
+
