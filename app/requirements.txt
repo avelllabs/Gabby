@@ -7,3 +7,4 @@ soupsieve==2.0
 pg8000==1.24.2
 SQLAlchemy==1.4.38
 cloud-sql-python-connector==0.6.1
+psycopg2-binary==2.9.3

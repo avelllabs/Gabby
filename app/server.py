@@ -1,6 +1,5 @@
 import os
 from flask import Flask, request, jsonify
-from flask_restful import reqparse
 
 from flask_cors import CORS
 import json
@@ -31,10 +30,7 @@ CORS(app)
 def get_attributes():
     print('get_attributes')
     
-    parser = reqparse.RequestParser()
-    parser.add_argument('category', help='category')
-    args = parser.parse_args()
-    #args = request.get_json()  
+    args = request.get_json()  
 
     print('args',  args)
 
