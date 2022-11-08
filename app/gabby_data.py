@@ -49,6 +49,9 @@ def drop_numeric_phrases(df):
 
 
 def get_attributes_list_v2(category):
+
+    category = category.lower()
+
     shortlisted_attributes_query = \
         f'''
         SELECT *
@@ -61,13 +64,16 @@ def get_attributes_list_v2(category):
         n_qphrase_attrs = 5
     
     shortlisted_attributes = pd.read_sql(shortlisted_attributes_query, conn)
+    print(shortlisted_attributes.shape)
     sim_attrs_list = \
         shortlisted_attributes. \
             sort_values('neighbor_distances').sort_values('n_reviews', ascending=False). \
                 groupby('qphrase'). \
                     head(n_qphrase_attrs). \
                         reset_index(drop=True)[['key_phrase_id', 'phrase', 'qphrase']].sort_values('qphrase')
-    return sim_attrs_list[['key_phrase_id', 'phrase']].drop_duplicates().sample(50)
+    print(sim_attrs_list.shape)
+    sim_attrs_list_deduped =  sim_attrs_list[['key_phrase_id', 'phrase']].drop_duplicates()
+    return sim_attrs_list_deduped.sample(min(50, sim_attrs_list_deduped.shape[0]))
 
 
 def get_attributes_list():

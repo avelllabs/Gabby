@@ -1,7 +1,10 @@
 import os
 from flask import Flask, request, jsonify
+from flask_restful import reqparse
+
 import json
 import pandas as pd
+
 
 import gabby_data
 
@@ -29,8 +32,14 @@ def subscribe():
 def get_attributes():
     print('get_attributes')
     
-    args = request.get_json()  
-    
+
+    parser = reqparse.RequestParser()
+    parser.add_argument('category', help='category')
+    args = parser.parse_args()
+    #args = request.get_json()  
+
+    print('args',  args)
+
     attributes = gabby_data.get_attributes_list_v2(args['category'])
     return attributes.to_json(orient='records')
 
