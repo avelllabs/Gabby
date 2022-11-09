@@ -92,14 +92,19 @@
  ;; https://joingabby.com/getProducts
  ;; POST
  ;; attributes [attribute]
+
+ ;; 
  [(re-frame/inject-cofx :get-products-params)]
+ 
+ ;;
  (fn [{:keys [db products-params]} _]
-  ;;  (.log js/console products-params  {:db db :p params})
+  ;;  (.log js/console "jk debug /getProducts" products-params  {:db db})
    {:http-xhrio {:method :post
                  :uri "https://gabby-f6171.uc.r.appspot.com/getProducts"
                  :response-format (ajax/json-response-format {:keywords? true})
                  :format (ajax/json-request-format)
-                 :params {:attributes products-params}
+                 :params {:attributes products-params
+                          :category (clojure.string/lower-case (:product-category db))}
                  :on-success [:get-products-on-response-success]
                  :on-failure [:get-products-on-response-failure]}
     :db (-> db
@@ -121,7 +126,7 @@
 (re-frame/reg-event-db
  :get-reviews-on-response-success
  (fn [db [v response]]
-   (.log js/console ":get-reviews-on-response-success" response ">>" v)
+  ;;  (.log js/console ":get-reviews-on-response-success" response ">>" v)
    (-> db
        (assoc :reviews-loading? false)
        (assoc :data-get-reviews (js->clj response)))))
@@ -143,13 +148,14 @@
 
  ;;
  (fn [{:keys [db products-params]} [_ product]]
-  ;;  (.log js/console "::subs/get-reviews" product)
+  ;;  (.log js/console "::subs/get-reviews" product (:product-category db))
    {:http-xhrio {:method :post
                  :uri "https://gabby-f6171.uc.r.appspot.com/getReviews"
                  :response-format (ajax/json-response-format {:keywords? true})
                  :format (ajax/json-request-format)
                  :params {:attributes products-params
-                          :asin (:asin product)}
+                          :asin (:asin product)
+                          :category (clojure.string/lower-case (:product-category db))}
                  :on-success [:get-reviews-on-response-success]
                  :on-failure [:get-reviews-on-response-failure]}
     :db (-> db
@@ -232,6 +238,6 @@
 (re-frame/reg-event-db
  ::toggle-expanded-review-text
  (fn [db [_ review-record]]
-   (.log js/console "::toggle-expanded-review-text" db ">>" review-record)
-   (.log js/console "::toggle" (:data-get-reviews db) ">>" (:reviewerID review-record) ">>>" (index-of (:data-get-reviews db) review-record))
+  ;;  (.log js/console "::toggle-expanded-review-text" db ">>" review-record)
+  ;;  (.log js/console "::toggle" (:data-get-reviews db) ">>" (:reviewerID review-record) ">>>" (index-of (:data-get-reviews db) review-record))
    (assoc-in db [:data-get-reviews (index-of (:data-get-reviews db) review-record)] (assoc review-record :expanded true))))

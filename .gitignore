@@ -2,3 +2,4 @@
 app/.gcloudignore
 app/__pycache__/
 app/databases/gabbydb.sqlite
+front-end/.calva/output-window/output.calva-repl

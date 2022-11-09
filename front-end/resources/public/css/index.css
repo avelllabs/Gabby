@@ -53,6 +53,7 @@
 }
 .btn_launchapp:hover {
 	color: #FFFFFF;
+	opacity: .9;
 }
 .btn_launchapp.focus {
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -94,15 +95,18 @@
 	margin-right: 0.2rem;
 }
 
-.attribute_tag:focus {
-	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+.modal_attribute_tag:hover,
+.attribute_tag:hover {
+	opacity: .9;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) inset;
 }
-.attribute_tag.focus {
+
+.attribute_tag:focus {
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .attribute_tag.active {
-	border: 3px solid #50448A;
+	/* border: 3px solid #50448A; */
 	color: #50448A;
 }
 
