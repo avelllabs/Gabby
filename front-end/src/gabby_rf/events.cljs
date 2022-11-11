@@ -3,7 +3,8 @@
             [clojure.string :refer [index-of]]
             [day8.re-frame.tracing :refer-macros [fn-traced]]
             [gabby-rf.db :as db]
-            [re-frame.core :as re-frame]))
+            [re-frame.core :as re-frame]
+            [clojure.string :as str]))
 
 (re-frame/reg-event-db
  ::initialize-db
@@ -54,7 +55,7 @@
                  :uri "https://gabby-f6171.uc.r.appspot.com/getAttributes"
                  :response-format (ajax/json-response-format {:keywords? true})
                  :format (ajax/json-request-format)
-                 :params {:category (last params)}
+                 :params {:category (str/lower-case (last params))}
                  :on-success [:get-attributes-on-response-success]
                  :on-failure [:get-attributes-on-response-failure]}
     :db (-> db
@@ -104,7 +105,7 @@
                  :response-format (ajax/json-response-format {:keywords? true})
                  :format (ajax/json-request-format)
                  :params {:attributes products-params
-                          :category (clojure.string/lower-case (:product-category db))}
+                          :category (str/lower-case (:product-category db))}
                  :on-success [:get-products-on-response-success]
                  :on-failure [:get-products-on-response-failure]}
     :db (-> db
@@ -155,7 +156,7 @@
                  :format (ajax/json-request-format)
                  :params {:attributes products-params
                           :asin (:asin product)
-                          :category (clojure.string/lower-case (:product-category db))}
+                          :category (str/lower-case (:product-category db))}
                  :on-success [:get-reviews-on-response-success]
                  :on-failure [:get-reviews-on-response-failure]}
     :db (-> db
@@ -241,3 +242,15 @@
   ;;  (.log js/console "::toggle-expanded-review-text" db ">>" review-record)
   ;;  (.log js/console "::toggle" (:data-get-reviews db) ">>" (:reviewerID review-record) ">>>" (index-of (:data-get-reviews db) review-record))
    (assoc-in db [:data-get-reviews (index-of (:data-get-reviews db) review-record)] (assoc review-record :expanded true))))
+
+(re-frame/reg-event-db
+ ::like
+ (fn [db [_ param]]
+   (assoc-in db [:data-get-products (index-of (:data-get-products db) param)] (merge param {:liked true :disliked false}))
+   ))
+
+(re-frame/reg-event-db
+ ::dislike
+ (fn [db [_ param]]
+   (assoc-in db [:data-get-products (index-of (:data-get-products db) param)] (merge param {:disliked true :liked false}))
+   ))

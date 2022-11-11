@@ -27,6 +27,8 @@
    {:label "Camera quality" :active true}
    {:label "Display size" :active true}])
 
+;; TODO remove ids and to classes
+
 (defn common-header [active-panel current-product]
   (let [navigate-to (fn [panel]
                       (case panel
@@ -176,7 +178,15 @@
         [:div.row.align-items-center.justify-content-center.middle-section-footer
          [:div.col-md-7.d-none.d-lg-block.d-sm-none.d-md-none
           [:img.img-fluid
-           {:src "images/landing_img2.png"}]]
+           {:src "images/landing_img2.png"}]
+          ;; [:lottie-player.img-fluid
+          ;;  {:src "https://lottie.host/ef992465-b4cc-4919-9bf7-710a6e0533d3/A2l6EIjIoy.json"
+          ;;   :background "transparent"
+          ;;   :speed "1"
+          ;;   :autoplay ""
+          ;;   }]
+          ]
+         
          [:div.col-sm-8.col-md-8.col-lg-5.text-left
           [:div.section_heading
            "We'll do the work"]
@@ -185,7 +195,13 @@
           [:div.row.align-items-center.justify-content-center
            [:div.col-xs-12.col-sm-12
             [:img.d-block.d-xs-block.d-sm-block.d-lg-none.d-none
-             {:src "images/landing_img2.png"}]]]
+             {:src "images/landing_img2.png"}]
+            ;; [:lottie-player.img-fluid.d-block.d-xs-block.d-sm-block.d-lg-none.d-none
+            ;;  {:src "https://lottie.host/ef992465-b4cc-4919-9bf7-710a6e0533d3/A2l6EIjIoy.json"
+            ;;   :background "transparent"
+            ;;   :speed "1"
+            ;;   :autoplay ""}]
+            ]]
           [:a.btn.btn_launchapp
            {:role "button"
             :on-click #(re-frame/dispatch [::events/navigate :product-index])}
@@ -201,47 +217,13 @@
           "Gabby is free and easy to use"]
          [:div.bottom_section_text
           "This is an experiment from 3 friends that want to get 100 strangers (future friends) to go through it :) If you like hearing from us please add your email and we will make sure to keep you informed :)"]
-         
-         [mailerlite-embedded-form]
-         [:form#subscribe-form.subscribe-form
-          {:style {:display "none"}}
-          [:div.row.align-items-center
-           [:div.col-xs-12.col-sm-12.col-md-5.offset-md-2.mt-2
-            [:label.sr-only
-             {:for "inlineFormInputEmail"}
-             "Email"]
-            [:input
-             {:type "email"
-              :name "email"
-              :required true
-              :class "form-control"
-              :id "inlineFormInputEmail"
-              :placeholder "Enter email address"
-              :value user-email
-              :on-change (fn [ev]
-                          ;;  (.log js/console "form:input" (.-value (.-target ev)) ev)
-                           (re-frame/dispatch [::events/set-user-email (.-value (.-target ev))]))}]]
-           [:div.col-xs-12.col-sm-12.my-2.col-md-3.text-center.mt-3
-            [:button
-             {:type "submit"
-              :class "btn btn_submitemail"
-              :on-click (fn [ev]
-                          ;; (.log js/console "form:submit" user-email ">>" (.-value (.-target ev)))
-                          (.preventDefault ev ev)
-                          (let [no-email? (empty? user-email)]
-                            (when (false? no-email?)
-                              (re-frame/dispatch [::events/subscribe user-email]))))}
-             "SUBSCRIBE"]]]
-          (when (true? user-subscribed?)
-            [:div.row.align-items-center
-             [:div.col.text-center
-              [:div.subscribe_complete_box
-               "Thank you for signing up!"]]])]]]
-               [:div.row.align-items-center.justify-content-center.by-line
-                [:h4 "Experiment from Toronto from 4 "
-                 [:span.icon-smiley-glasses "🤓"]
-                 " with "
-                 [:span.icon-heart "❤️"]]]]]]))
+
+         [mailerlite-embedded-form]]]
+       [:div.row.align-items-center.justify-content-center.by-line
+        [:h4 "Experiment from Toronto from 4 "
+         [:span.icon-smiley-glasses "🤓"]
+         " with "
+         [:span.icon-heart "❤️"]]]]]]))
        
 (defmethod routes/panels :home-panel [] [home-panel])
 
@@ -325,7 +307,6 @@
              [:div.col-sm
               [:div#step "Step 2"]]]
             [:div.row
-             {:style {:padding-top "1.5rem"}}
              [:div.col.mx-auto
               [:div#step2_instruction
                "Choose "
@@ -343,13 +324,13 @@
                [:div.align-items-center.justify-content-center.my-4
                 [:div.btn-group-toggle
                  [:label.btn.attribute_tag
-                  [:input.shimmer.shimmer_attribute_tag]]
+                  [:div.shimmer.shimmer_attribute_tag]]
                  [:label.btn.attribute_tag
-                  [:input.shimmer.shimmer_attribute_tag]]
-                 [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline
-                  [:input.shimmer.shimmer_attribute_tag]]
-                 [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline
-                  [:input.shimmer.shimmer_attribute_tag]]]]]
+                  [:div.shimmer.shimmer_attribute_tag]]
+                 [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline.float-left
+                  [:div.shimmer.shimmer_attribute_tag]]
+                 [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline.float-left
+                  [:div.shimmer.shimmer_attribute_tag]]]]]
               ;; Atributes lists 
               [:div.attributes_list
                (for [group product-attributes]
@@ -480,7 +461,7 @@
                                                "...more"])]
                                            [:small (.toLocaleString (js/Date. (:reviewTime review)))]
                                            [:b.product-review-modal--filter-tag-positive "Positive"]]))])]]])]])))
-
+;; TODO refactor make dry
 (defn product-score-class [score]
   (let [score-rounded (->> score (* 100) (Math/round))]
     (cond
@@ -492,7 +473,14 @@
   "description..."
   [product product-score]
   (let [show? (reagent/atom false)
-        reviews-loading? @(re-frame/subscribe [::subs/reviews-loading?])]
+        reviews-loading? @(re-frame/subscribe [::subs/reviews-loading?])
+        freeze-body #(set! (-> js/document
+                               (.-body)
+                               (.-style)
+                               (.-overflow)) "hidden")
+        reset-body-style #(set! (-> js/document
+                                    (.-body)
+                                    (.-style)) "")]
     (fn []
       [v-box :src (at)
        :children [[:a.matching_score_header
@@ -511,9 +499,17 @@
                      :backdrop-on-click #(reset! show? false)
                      :parts {:child-container {:class "product-matching-score-modal-container"}}
                      :child [:div.modal-content
-                             [:div.modal-header.text-center
+                             [:div.modal-header
                               [:h5#score_modal_title.matching_score_modal_title.w-100 
-                               "Matching Score"]]
+                               "Matching Score"]
+                              [:button.close
+                               {:type "button"
+                                :aria-label "Close"
+                                :on-click (fn []
+                                            (reset! show? false)
+                                            (re-frame/dispatch [::events/data-remove-reviews])
+                                            (reset-body-style))}
+                               [:img {:src "/images/close_icon.svg"}]]]
                              [:div.row.no-gutters
                               [:div.col-9.product_matchingscore_modal_subheading
                                {:style {:padding-left "1.2rem"}}
@@ -589,18 +585,16 @@
               "Showing 10 best matched products"]]]
            [:div.row.align-items-center.justify-content-center
             {:style {:padding-top "1.5rem"}}
-            [:div
-             (when (true? products-loading?)
-               [:div.text-center.mb-4
-                [:div.spinner-border.spinner-border-sm
-                 {:role "status"}
-                 [:span.sr-only "Loading..."]]])
-             (when (not products-loading?)
-               [:div#step4_product_stats
-                "Scoured through "
-                [:span#matchedProducts_count.purple1
-                 product-search-result-count " products"]
-                " based on what best mattered to you"])]]
+            [:div#step4_product_stats
+             "Scoured through "
+             (if (not products-loading?)
+               [:span#matchedProducts_count.purple1
+                product-search-result-count " products"]
+                  ;; else
+               [:span.spinner-border.spinner-border-sm
+                {:role "status"}
+                [:span.sr-only "Loading..."]])
+             " based on what best mattered to you"]]
            [:div.feedback_card
             [:div.row.align-items-center
              [:div.col-md-8.col-xs-12
@@ -686,9 +680,14 @@
                            [:div.col-lg-7.col-sm-6
                             "Was this recommendation helpful"]
                            [:div.col-lg-4.col-sm-6
-                            [:button.btn.thumbs_btn.thumbs_up.thumbs_up_inactive
-                             {:style {:margin-right "0.5rem"}}]
-                            [:button.btn.thumbs_btn.thumbs_down.thumbs_down_inactive]]]]
+                            [:button.btn.thumbs_btn.thumbs_up.__thumbs_up_active
+                             {:style {:margin-right "0.5rem"}
+                              :class (if (true? (:liked product)) "thumbs_up_active" "thumbs_up_inactive")
+                              :on-click #(re-frame/dispatch [::events/like product])}]
+                            [:button.btn.thumbs_btn.thumbs_down.__thumbs_down_inactive
+                             {:class (if (true? (:disliked product)) "thumbs_down_active" "thumbs_down_inactive")
+                              :on-click #(re-frame/dispatch [::events/dislike product])}
+                             ]]]]
                          [:div.col-md-2.product_score
                           {:style {:padding-left "0"}}
                      ;; Matching score modal
@@ -720,8 +719,12 @@
                           "Was this helpful"]
                          [:div.col-6
                           [:button.btn.thumbs_btn.thumbs_up.thumbs_up_inactive
-                           {:style {:margin-right "0.5rem"}}]
-                          [:button.btn.thumbs_btn.thumbs_down.thumbs_down_inactive]]]]))])]])))}))
+                           {:style {:margin-right "0.5rem"}
+                            :class (if (true? (:liked product)) "thumbs_up_active" "thumbs_up_inactive")
+                            :on-click #(re-frame/dispatch [::events/like product])}]
+                          [:button.btn.thumbs_btn.thumbs_down.thumbs_down_inactive
+                           {:class (if (true? (:disliked product)) "thumbs_down_active" "thumbs_down_inactive")
+                            :on-click #(re-frame/dispatch [::events/dislike product])}]]]]))])]])))}))
 
 (defmethod routes/panels :product-reviews-panel [] [product-reviews-panel])
 

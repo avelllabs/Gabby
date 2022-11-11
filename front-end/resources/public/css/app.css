@@ -95,13 +95,18 @@ body {
 	font-weight: 500;
 	font-size: 18px;
 	line-height: 24px;
-
 	letter-spacing: -0.02em;
-
 	color: #979797;
-	
 	text-align: center;
 }
+
+#step4_product_stats {
+	margin-bottom: 2.5rem;
+}
+#step4_product_stats .spinner-border {
+	color: #50448A;
+}
+
 
 
 /* #step2_attribute_stats {
@@ -394,6 +399,10 @@ body {
 
 }
 
+.thumbs_btn:hover {
+	opacity: .8;
+}
+
 .thumbs_up_inactive {
 	padding: 0;
 	background-color: #EAE7FA;
@@ -469,22 +478,19 @@ body {
 	height: 48px;
 	background-image: var(--thumbs_down2_svg);
 }
+.thumbs_down_active::before {
+	content: "";
+	display: inline-block;
+	width: 48px;
+	height: 48px;
+	background-image: var(--thumbs_down2_svg);
+}
 
 .thumbs_down_active:focus {
 	box-shadow: none;
 }
 
 
-#step4_product_stats {
-	font-family: 'DM Sans';
-	font-style: normal;
-	font-weight: 500;
-	font-size: 18px;
-	line-height: 24px;
-	letter-spacing: -0.02em;
-	color: #979797;
-	margin-bottom: 2.5rem;
-}
 
 .feedback_card {
 	border-radius: 1rem;
@@ -492,6 +498,9 @@ body {
 	box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.1);
 	padding: 2rem 2rem;
 	margin-bottom: 1.5rem;
+}
+.feedback_card:hover {
+	box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.1) inset;
 }
 
 .feedback_card_text {
@@ -519,7 +528,7 @@ body {
 
 .btn_feedback:hover {
 	color: #50448A;
-	box-shadow: -3px 6px 4px rgba(0, 0, 0, 0.25);
+	box-shadow: -3px 6px 4px rgba(0, 0, 0, 0.25) inset;
 }
 
 .btn_restart {
@@ -901,10 +910,10 @@ body {
 .product-matching-score-modal-container .modal-content .modal-header {
 	border-bottom: none;
 }
-
 .product-reviews-modal-container .modal_review_content {
-	max-height: 500px;
-	overflow-y: scroll;
+	/* Remove inner scrollable in reviews modal */
+	/* max-height: 500px;
+	overflow-y: scroll; */
 	margin: 15px 6%;
 }
 
@@ -1242,11 +1251,17 @@ img.d-block.d-xs-block.d-sm-block {
 		font-size: 1.8rem;
 		line-height: 2.3rem;
 	}
-	#step4_product_stats {
+	#step4_product_stats,
+	#step4_product_stats .purple1 {
 		font-weight: 500;
 		font-size: 14px;
 		line-height: 24px;
 		max-width: 80vw;
+	}
+	.btn_feedback {
+		font-size: 12px;
+		line-height: 18px;
+		padding: 10px 20px;
 	}
 }
 
