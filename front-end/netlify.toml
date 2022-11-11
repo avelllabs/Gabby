@@ -1,3 +1,6 @@
+[build]
+  publish = "resources/public"
+  
 [[redirects]]
   from = "/*"
   to = "/index.html"
