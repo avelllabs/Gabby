@@ -478,13 +478,6 @@ body {
 	height: 48px;
 	background-image: var(--thumbs_down2_svg);
 }
-.thumbs_down_active::before {
-	content: "";
-	display: inline-block;
-	width: 48px;
-	height: 48px;
-	background-image: var(--thumbs_down2_svg);
-}
 
 .thumbs_down_active:focus {
 	box-shadow: none;
