@@ -230,14 +230,16 @@
 ;; app
 ;; TODO put inline style in css file
 
-(def product-categories [{:img-src "/images/laptop.svg"
-                          :label "Laptop"}
-                         {:img-src "/images/monitor.svg"
-                          :label "Monitor"}
-                         {:img-src "/images/headphone.svg"
-                          :label "Headphone"}
-                         {:img-src "/images/mouse.svg"
-                          :label "Mouse"}])
+(def product-categories-meta-map {:laptop {:img-src "/images/laptop.svg"
+                                           :label "Laptop"}
+                                  :monitor {:img-src "/images/monitor.svg"
+                                            :label "Monitor"}
+                                  :headphone {:img-src "/images/headphone.svg"
+                                              :label "Headphone"}
+                                  :mouse {:img-src "/images/mouse.svg"
+                                          :label "Mouse"}
+                                  :tv {:img-src "/images/monitor.svg"
+                                       :label "TV"}})
 (defn product-index-panel []
   (reagent/create-class 
    {:component-did-mount
@@ -245,9 +247,10 @@
       (.capture js/window.posthog "$pageview"))
     :reagent-render
     (fn []
-      (let [product-categories product-categories
-            active-panel @(re-frame/subscribe [::subs/get-active-panel])
-            product-label @(re-frame/subscribe [::subs/product-category])]
+      (let [active-panel @(re-frame/subscribe [::subs/get-active-panel])
+            product-label @(re-frame/subscribe [::subs/product-category])
+            product-categories (re-frame/dispatch [::events/get-categories])]
+        
         [:div.container.product-flow
          {:role "main"}
          [common-header active-panel product-label]
@@ -263,18 +266,18 @@
             [:div.more_categories_label "We will be adding more product categories after this experiment"]]]
           [:div.product-category-list-container
            [:div.row.product-category-list
-            (for [product-item product-categories]
+            (for [product-item @(re-frame/subscribe [::subs/get-product-categories])]
               ^{:key product-item}
               [:div.product-category-container.col-6.col-sm-6.col-md-6.col-lg-3
                [:div.product_category
-                {:name (:label product-item)
+                {:name product-item
                  :role "button"
-                 :on-click #(re-frame/dispatch [:get-attributes (:label product-item)])} ;; TODO change to button element
+                 :on-click #(re-frame/dispatch [:get-attributes product-item])} ;; TODO change to button element
                 [:div.row.justify-content-center.align-self-center
                  [:img
-                  {:src (:img-src product-item)}]]
+                  {:src (:img-src ((keyword product-item) product-categories-meta-map))}]]
                 [:div.row.justify-content-center.align-self-center
-                 [:div.product_category_label (:label product-item)]]]])]]]]))}))
+                 [:div.product_category_label (:label ((keyword product-item) product-categories-meta-map))]]]])]]]]))}))
 
 
 (defmethod routes/panels :product-index-panel [] [product-index-panel])
@@ -359,6 +362,26 @@
 (defmethod routes/panels :product-attributes-panel [] [product-attributes-panel])
 
 ;; products page
+(defn review-block [review]
+  (let [expand? (reagent/atom false)] 
+    (fn []
+      [:div.modal_review
+       [:div.modal_review_title
+        (:reviewTitle review)]
+       [:p.modal-review--text
+        {:class (if (true? @expand?) "--text-expanded" "--text-collapsed")}
+        (:reviewText review)
+        (when (not (true? @expand?))
+          [:a.modal-review--more-text
+           {:on-click #(reset! expand? true)}
+           "...more"])]
+       [:small (.toLocaleString (js/Date. (:reviewTime review)))]
+       [:b.product-review-modal--filter-tag-sentiment
+        {:class (case (:sentiment review)
+                  "positive" "-tag-positive"
+                  "negative" "-tag-negative"
+                  "")}
+        (:sentiment review)]])))
 
 (defn product-reviews-modal
   "description..."
@@ -372,95 +395,104 @@
                                    (.-body)
                                    (.-style)) "")]
     (fn []
-      [v-box :src (at)
-       :children [[:div.num_reviews
-                   {:on-click (fn []
-                                (reset! show? true)
-                                (re-frame/dispatch [::events/get-reviews product])
-                                (freeze-body))}
-                   "See " num-reviews " reviews"]
-                  (when @show?
-                    [modal-panel :src (at)
-                     :backdrop-on-click (fn []
-                                          (reset! show? false)
-                                          (re-frame/dispatch [::events/data-remove-reviews])
-                                          (reset-body-style))
-                     :parts {:child-container {:class "product-reviews-modal-container"}}
-                     :child [:div.__modal-content
-                             [:div.modal-header.product-reviews-modal-header
-                              [:h5.modal-title (:title product)]
-                              [:button.close
-                               {:type "button"
-                                :aria-label "Close"
-                                :on-click (fn []
+      (let [_reviews @(re-frame/subscribe [::subs/product-reviews])
+            reviews-filter-context @(re-frame/subscribe [::subs/reviews-filter-context])
+            _reviews-filtered @(re-frame/subscribe [::subs/filtered-reviews])
+            _reviews-loading @(re-frame/subscribe [::subs/reviews-loading?])
+            sentiment-filter-context @(re-frame/subscribe [::subs/get-reviews-sentiment-context])
+            has-filter (> (count (filter (fn [item] (true? (last item)))  reviews-filter-context)) 0)
+            has-sentiment-filter (or (:negative sentiment-filter-context) (:positive sentiment-filter-context))
+            reviews (if (or has-filter has-sentiment-filter) _reviews-filtered _reviews)
+            ]
+        [v-box :src (at)
+         :children [[:div.num_reviews
+                     {:on-click (fn []
+                                  (reset! show? true)
+                                  (re-frame/dispatch [::events/get-reviews product])
+                                  (freeze-body))}
+                     "See " num-reviews " reviews"]
+                    (when @show?
+                      [modal-panel :src (at)
+                       :backdrop-on-click (fn []
                                             (reset! show? false)
                                             (re-frame/dispatch [::events/data-remove-reviews])
-                                            (reset-body-style))}
-                               [:img {:src "/images/close_icon.svg"}]]]
-                             [:p.product-review-modal--sub-header.d-sm-block.d-block.d-md-none.d-lg-none.d-none
-                              "Showing top 10 reviews of 2,648 Review"]
-                             [:div.product-review-modal--attributes-list
-                              [:div {:class "btn-group-toggle"}
-                               [:label.btn.modal_attribute_tag.active
-                                [:input
-                                 {:type "checkbox"}] "All"
-                                [:span.product-review-modal--attributes-list-count " 1,204"]]
-                               (for [item selected-products]
-                                 ^{:key item}
+                                            (reset-body-style))
+                       :parts {:child-container {:class "product-reviews-modal-container"}}
+                       :child [:div.__modal-content
+                               [:div.modal-header.product-reviews-modal-header
+                                [:h5.modal-title (:title product)]
+                                [:button.close
+                                 {:type "button"
+                                  :aria-label "Close"
+                                  :on-click (fn []
+                                              (reset! show? false)
+                                              (re-frame/dispatch [::events/data-remove-reviews])
+                                              (reset-body-style))}
+                                 [:img {:src "/images/close_icon.svg"}]]]
+                               [:p.product-review-modal--sub-header.d-sm-block.d-block.d-md-none.d-lg-none.d-none
+                                "Showing top 10 reviews of 2,648 Review"]
+                               [:div.product-review-modal--attributes-list
+                                [:div {:class "btn-group-toggle"}
                                  [:label.btn.modal_attribute_tag
+                                  {:class (if (true? has-filter) "" "active")}
                                   [:input
-                                   {:type "checkbox"}] item
-                                  [:span.product-review-modal--attributes-list-count " 100"]])]]
-                             [:div.reviews-modal--sub-filter-group
-                              [:p
-                               "Overall 78% favourable"]
-                              [:div.progress
-                               [:div.progress-bar.-progress-positive
-                                {:role "progressbar"
-                                 :style {:width "80%"}}]
-                               [:div.progress-bar.-progress-negative
-                                {:role "progressbar"
-                                 :style {:width "100%"}}]]
-                              [:div.row.mt-3
-                               [:div.col-6
-                                [:button.reviews-modal--filter-pill-btn.active
-                                 [:b.-text-green "Positive"]
-                                 [:span " (1,789)"]]]
-                               [:div.col-6
-                                [:button.reviews-modal--filter-pill-btn.float-right
-                                 [:b.-text-red "Negative"]
-                                 [:span " (523)"]]]]]
-                             [:div.__modal-body
-                              (when (true? @(re-frame/subscribe [::subs/reviews-loading?]))
-                                (for [loading-item (range 2)]
-                                  ^{:key loading-item}
-                                  [:div.reviews-modal--loading-shimmer
-                                   [:div.shimmer
-                                    {:style {:height "18px"
-                                             :margin-bottom "0.5rem"}}]
-                                   [:div.shimmer
-                                    {:style {:height "18px"
-                                             :margin-bottom "1rem"
-                                             :width "75%"}}]
-                                   [:div.shimmer
-                                    {:style {:height "18px"
-                                             :width "20%"}}]]))
-                              (when (false? @(re-frame/subscribe [::subs/reviews-loading?]))
-                                [:div.modal_review_content
-                                 (doall (for [review @(re-frame/subscribe [::subs/product-reviews])]
-                                          ^{:key review}
-                                          [:div.modal_review
-                                           [:div.modal_review_title
-                                            (:reviewTitle review)]
-                                           [:p.modal-review--text
-                                            {:class (if (true? (:expanded review)) "--text-expanded" "--text-collapsed")}
-                                            (:reviewText review)
-                                            (when (not (true? (:expanded review)))
-                                              [:a.modal-review--more-text
-                                               {:on-click #(re-frame/dispatch [::events/toggle-expanded-review-text review])}
-                                               "...more"])]
-                                           [:small (.toLocaleString (js/Date. (:reviewTime review)))]
-                                           [:b.product-review-modal--filter-tag-positive "Positive"]]))])]]])]])))
+                                   {:type "checkbox"
+                                    :on-click #(re-frame/dispatch [::events/reset-filter-context])}] "All"
+                                  [:span.product-review-modal--attributes-list-count " " (count _reviews)]]
+                                 (for [item reviews-filter-context]
+                                   ^{:key (first item)}
+                                   [:label.btn.modal_attribute_tag
+                                    {:class (if (true? (last item)) "active" "")}
+                                    [:input
+                                     {:type "checkbox"
+                                      :on-click #(re-frame/dispatch [::events/update-filter-context {:item item :context reviews-filter-context}])}] 
+                                    (first item)
+                                    [:span.product-review-modal--attributes-list-count " " @(re-frame/subscribe [::subs/count-reviews item])]])]]
+                               [:div.reviews-modal--sub-filter-group
+                                [:div.progress
+                                 [:div.progress-bar.-progress-positive
+                                  {:role "progressbar"
+                                   :style {:width "80%"}}]
+                                 [:div.progress-bar.-progress-negative
+                                  {:role "progressbar"
+                                   :style {:width "100%"}}]]
+                                (when (false? _reviews-loading) 
+                                  (doall 
+                                   [:div.row.mt-3
+                                     [:div.col-6
+                                      [:button.reviews-modal--filter-pill-btn
+                                       {:on-click #(re-frame/dispatch [::events/toggle-sentiment-filter-context :positive])
+                                        :class (if (true? (:positive sentiment-filter-context)) "active" "")}
+                                       [:b.-text-green "Positive"]
+                                       [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "positive" :context reviews}])]]]
+                                     [:div.col-6
+                                      [:button.reviews-modal--filter-pill-btn.float-right
+                                       {:on-click #(re-frame/dispatch [::events/toggle-sentiment-filter-context :negative])
+                                        :class (if (true? (:negative sentiment-filter-context)) "active" "")}
+                                       [:b.-text-red "Negative"]
+                                       [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "negative" :context reviews}])]]]]))]
+                               [:div.__modal-body
+                                
+                                (when (true? _reviews-loading)
+                                  (for [loading-item (range 2)]
+                                    ^{:key loading-item}
+                                    [:div.reviews-modal--loading-shimmer
+                                     [:div.shimmer
+                                      {:style {:height "18px"
+                                               :margin-bottom "0.5rem"}}]
+                                     [:div.shimmer
+                                      {:style {:height "18px"
+                                               :margin-bottom "1rem"
+                                               :width "75%"}}]
+                                     [:div.shimmer
+                                      {:style {:height "18px"
+                                               :width "20%"}}]]))
+                                (when (false? _reviews-loading)
+                                  [:div.modal_review_content
+                                   (doall (for [review reviews]
+                                            ^{:key review}
+                                            [review-block review]
+                                            ))])]]])]]))))
 ;; TODO refactor make dry
 (defn product-score-class [score]
   (let [score-rounded (->> score (* 100) (Math/round))]
@@ -636,9 +668,9 @@
                  [:div.shimmer
                   {:style {:height "60%"
                            :margin-top "1rem"}}]]]]])
-      ;; ============
-      ;; PRODUCT LIST
-      ;; ============
+          ;; ============
+          ;; PRODUCT LIST
+          ;; ============
            (when (not products-loading?)
              [:div#product_list
               (doall (for [product product-list]
@@ -668,8 +700,8 @@
                         ;;   :data-asin (:asin product)}]
                             [product-reviews-modal
                              product
-                             (:num_reviews product)
-                             @(re-frame/subscribe [::subs/selected-products])]]
+                             (:total product)
+                             @(re-frame/subscribe [::subs/reviews-filter-context])]]
                            [:div.col-lg-8.col-xs-12
                             [:div.product_link
                              [:a

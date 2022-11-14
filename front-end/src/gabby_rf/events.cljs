@@ -21,11 +21,38 @@
  (fn-traced [{:keys [db]} [_ active-panel]]
             {:db (assoc db :active-panel active-panel)}))
 
+
+;; /getCategories
+(re-frame/reg-event-db
+ :get-categories-on-response-success
+ (fn [db [_ response]]
+  ;;  (.log js/console db response)
+   (-> db
+       (assoc :loading? false)
+       (assoc :data-get-categories (js->clj response)))))
+
+(re-frame/reg-event-db
+ :get-categories-on-response-failure
+ (fn [db [_ response]]
+   ;; TODO handle failure
+   ;; (.log js/console "failure" db response)
+   (-> db
+       (assoc :loading? false))))
+
 (re-frame/reg-event-fx
- ::set-user-email
- (fn [{db :db} [_ email]]
-   {:db (-> db
-            (assoc :user-email email))}))
+ ::get-categories
+ ;; https://joingabby.com/getCategories
+ ;; GET
+ (fn [{db :db} _]
+   ;;(.log js/console {:db db :p params})
+   {:http-xhrio {:method :get
+                 :uri "https://gabby-f6171.uc.r.appspot.com/getCategories"
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :format (ajax/json-request-format)
+                 :on-success [:get-categories-on-response-success]
+                 :on-failure [:get-categories-on-response-failure]}
+    :db (-> db
+            (assoc :loading? true))}))
 
 ;; /getAttributes
 
@@ -40,7 +67,8 @@
 (re-frame/reg-event-db
  :get-attributes-on-response-failure
  (fn [db [_ response]]
-  ;;  (.log js/console "failure" db response)
+   ;; TODO handle failure
+   ;; (.log js/console "failure" db response)
    (-> db
        (assoc :loading? false))))
 
@@ -50,7 +78,7 @@
  ;; POST
  ;; category string
  (fn [{db :db} params]
-   ;;(.log js/console {:db db :p params})
+   (.log js/console "jk debug /getAttributes" {:db db :p params} (last params))
    {:http-xhrio {:method :post
                  :uri "https://gabby-f6171.uc.r.appspot.com/getAttributes"
                  :response-format (ajax/json-response-format {:keywords? true})
@@ -99,7 +127,7 @@
  
  ;;
  (fn [{:keys [db products-params]} _]
-  ;;  (.log js/console "jk debug /getProducts" products-params  {:db db})
+   (.log js/console "jk debug /getProducts" products-params  {:db db})
    {:http-xhrio {:method :post
                  :uri "https://gabby-f6171.uc.r.appspot.com/getProducts"
                  :response-format (ajax/json-response-format {:keywords? true})
@@ -130,7 +158,9 @@
   ;;  (.log js/console ":get-reviews-on-response-success" response ">>" v)
    (-> db
        (assoc :reviews-loading? false)
-       (assoc :data-get-reviews (js->clj response)))))
+       (assoc :data-get-reviews (js->clj response))
+       (assoc :data-reviews-grouped (group-by :phrase (js->clj response)))
+       (assoc :reviews-sentiment-filter-context {:positive false :negative false}))))
 
 (re-frame/reg-event-db
  :get-reviews-on-response-failure
@@ -160,12 +190,15 @@
                  :on-success [:get-reviews-on-response-success]
                  :on-failure [:get-reviews-on-response-failure]}
     :db (-> db
-            (assoc :reviews-loading? true))}))
+            (assoc :reviews-loading? true)
+            (assoc :reviews-filter-context (mapv (fn [item] [item false]) (:chosen-products db))))}))
 
 (re-frame/reg-event-db
  ::data-remove-reviews
  (fn [db _]
-   (dissoc db :data-get-reviews)))
+   (-> db
+       (assoc :data-get-reviews [])
+       (assoc :data-reviews-grouped {}))))
 
 ;; /subscribe
 ;; DEPRECATED - REMOVE IMPLEMENTATION
@@ -254,3 +287,21 @@
  (fn [db [_ param]]
    (assoc-in db [:data-get-products (index-of (:data-get-products db) param)] (merge param {:disliked true :liked false}))
    ))
+
+(re-frame/reg-event-fx
+ ::update-filter-context
+ (fn [{:keys [db]} [_ {:keys [item context]}]]
+   (let [attribute (first item)
+         active (last item)]
+     {:db (-> db
+              (assoc-in [:reviews-filter-context (index-of (:reviews-filter-context db) item)] [attribute (if (true? active) false true)]))})))
+
+(re-frame/reg-event-db
+ ::reset-filter-context
+ (fn [db _]
+   (assoc db :reviews-filter-context (mapv (fn [item] [(first item) false]) (:reviews-filter-context db)))))
+
+(re-frame/reg-event-db
+ ::toggle-sentiment-filter-context
+ (fn [db [_ param]]
+   (assoc-in db [:reviews-sentiment-filter-context param] (if (true? (get-in db [:reviews-sentiment-filter-context param])) false true))))

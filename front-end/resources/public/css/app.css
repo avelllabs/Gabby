@@ -1212,7 +1212,7 @@ img.d-block.d-xs-block.d-sm-block {
 		margin: 10px 0;
 	}
 
-	.product-review-modal--filter-tag-positive {
+	.product-review-modal--filter-tag-sentiment {
 		font-size: 12px;
 		line-height: 16px;
 		letter-spacing: -0.02em;
@@ -1514,7 +1514,7 @@ img.d-block.d-xs-block.d-sm-block {
 		line-height: 30px;
 	}
 
-	.product-review-modal--filter-tag-positive {
+	.product-review-modal--filter-tag-sentiment {
 		font-size: 18px;
 		line-height: 23px;
 		text-align: right;
@@ -1819,12 +1819,17 @@ img.d-block.d-xs-block.d-sm-block {
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25) inset;
 }
 
-.product-review-modal--filter-tag-positive {
+.product-review-modal--filter-tag-sentiment {
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: 700;
-	color: #237804;
 	margin-left: 20px;
+}
+.-tag-positive {
+	color: #237804;
+}
+.-tag-negative {
+	color: red;
 }
 
 .product-review-modal--attributes-list {
