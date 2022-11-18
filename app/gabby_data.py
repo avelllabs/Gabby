@@ -274,7 +274,7 @@ def get_products_for_attributes(attribute_list):
                             aggfunc=sum
                         ).fillna(0).reset_index()
     
-    product_attribute_counts['total'] = product_attribute_counts[product_attribute_counts.columns[1:]].sum(axis=1)
+    product_attribute_counts['total_reviews_in_context'] = product_attribute_counts[product_attribute_counts.columns[1:]].sum(axis=1)
     
     for phrase in product_attribute_counts.columns[1:-1]:
         product_attribute_counts[f"{phrase}_pbry"] = product_attribute_counts[phrase]/product_attribute_counts['total']
@@ -368,44 +368,51 @@ def get_products_for_attributes_v2(category, attribute_list):
                             columns='phrase',
                             aggfunc=sum
                         ).fillna(0).reset_index()
-    product_attribute_counts['total'] = product_attribute_counts[product_attribute_counts.columns[1:]].sum(axis=1)
+    product_attribute_counts = product_attribute_counts.rename(columns={ 
+                    c:f"{'_'.join(c.split())}_num_reviews" for c in product_attribute_counts.columns[1:]
+                })
+    product_attribute_counts['total_reviews_in_context'] = product_attribute_counts[product_attribute_counts.columns[1:]].sum(axis=1)
     for phrase in product_attribute_counts.columns[1:-1]:
-        product_attribute_counts[f"{phrase}_pbry"] = \
-            product_attribute_counts[phrase]/product_attribute_counts['total']
+        for phrase in product_attribute_counts.columns[1:-1]:
+            product_attribute_counts[f"{phrase}_pbry"] = \
+                product_attribute_counts[phrase]/product_attribute_counts['total_reviews_in_context']
     
     # within product pos and neg counts
     pos_counts = positive_attributes_counts[['asin', 'phrase', 'count']]. \
             pivot_table(values='count', index='asin', columns='phrase', aggfunc=sum). \
                 fillna(0). \
                     reset_index()
-    pos_counts = pos_counts.rename(columns={c:f"{c}_pos" for c in pos_counts.columns[1:]})
+    pos_counts = pos_counts.rename(columns={c:f"{'_'.join(c.split())}_pos" for c in pos_counts.columns[1:]})
 
     neg_counts = negative_attributes_counts[['asin', 'phrase', 'count']]. \
             pivot_table(values='count', index='asin', columns='phrase', aggfunc=sum). \
                 fillna(0). \
                     reset_index()
-    neg_counts = neg_counts.rename(columns={c:f"{c}_neg" for c in neg_counts.columns[1:]})
+    neg_counts = neg_counts.rename(columns={c:f"{'_'.join(c.split())}_neg" for c in neg_counts.columns[1:]})
 
     # setting up probability table
     prod_attr_prby = product_attribute_counts. \
                         merge(pos_counts, on='asin', how='left'). \
                             merge(neg_counts, on='asin', how='left').fillna(0)
+    
     for phrase in [c for c in prod_attr_prby.columns if c.endswith('pos') or c.endswith('neg')]:
-        prod_attr_prby[f"{phrase}_pbry"] = prod_attr_prby[phrase]/prod_attr_prby['total']
+        prod_attr_prby[f"{phrase}_pbry"] = \
+            prod_attr_prby[phrase]/prod_attr_prby['total_reviews_in_context']
 
     # positive leaning factors
     for phrase in positive_attributes_counts['phrase'].unique():
-        prod_attr_prby[f"{phrase}_score_level"] = \
-            prod_attr_prby[f"{phrase}_pos_pbry"]/prod_attr_prby[f"{phrase}_pbry"]
+        us_phrase = '_'.join(phrase.split()) 
+        prod_attr_prby[f"{phrase}_score_level"] = prod_attr_prby[f"{us_phrase}_pos_pbry"]/prod_attr_prby[f"{us_phrase}_num_reviews_pbry"]
         prod_attr_prby = prod_attr_prby.fillna(0.5)
 
+
     # total attribute occurrence adjustment
-    prod_attr_prby['total_perc_rank'] = prod_attr_prby['total'].rank(pct=True)
+    prod_attr_prby['total_perc_rank'] = prod_attr_prby['total_reviews_in_context'].rank(pct=True)
 
     # attribute hits indicators adjustment 
     prod_attr_prby['total_indicator_prby'] = \
-        (prod_attr_prby[[c for c in positive_attributes_counts['phrase'].unique()]] > 0).mean(axis=1)
-
+        (prod_attr_prby[['_'.join(c.split()) + '_num_reviews' for c in positive_attributes_counts['phrase'].unique()]] > 0).mean(axis=1)
+        
     # final score computation
     prod_attr_prby['score'] = \
         prod_attr_prby[[c for c in prod_attr_prby.columns if c.endswith('score_level')]].mean(axis=1) \
