@@ -7,12 +7,12 @@
    [re-frame.core :as re-frame]
    [reagent.core :as reagent]
    [clojure.string :as str]))
-   
 
-(def attributes-list 
-  [{:label "Decent Price"} 
-   {:label "Color" :active true} 
-   {:label "Quality build"} 
+
+(def attributes-list
+  [{:label "Decent Price"}
+   {:label "Color" :active true}
+   {:label "Quality build"}
    {:label "Customer service"}
    {:label "Volume"}
    {:label "Brightness" :active true}
@@ -26,6 +26,8 @@
    {:label "Durability" :active true}
    {:label "Camera quality" :active true}
    {:label "Display size" :active true}])
+
+;; TODO remove ids and to classes
 
 (defn common-header [active-panel current-product]
   (let [navigate-to (fn [panel]
@@ -83,7 +85,7 @@
 (defn mailerlite-embedded-form []
   (reagent/create-class
    {:component-did-mount
-    (fn [] 
+    (fn []
       ;; (println "I mounted")
       ;; ml.fn.renderEmbeddedForm
       ;; (let [ml "ml"
@@ -176,7 +178,15 @@
         [:div.row.align-items-center.justify-content-center.middle-section-footer
          [:div.col-md-7.d-none.d-lg-block.d-sm-none.d-md-none
           [:img.img-fluid
-           {:src "images/landing_img2.png"}]]
+           {:src "images/landing_img2.png"}]
+          ;; [:lottie-player.img-fluid
+          ;;  {:src "https://lottie.host/ef992465-b4cc-4919-9bf7-710a6e0533d3/A2l6EIjIoy.json"
+          ;;   :background "transparent"
+          ;;   :speed "1"
+          ;;   :autoplay ""
+          ;;   }]
+          ]
+
          [:div.col-sm-8.col-md-8.col-lg-5.text-left
           [:div.section_heading
            "We'll do the work"]
@@ -185,7 +195,13 @@
           [:div.row.align-items-center.justify-content-center
            [:div.col-xs-12.col-sm-12
             [:img.d-block.d-xs-block.d-sm-block.d-lg-none.d-none
-             {:src "images/landing_img2.png"}]]]
+             {:src "images/landing_img2.png"}]
+            ;; [:lottie-player.img-fluid.d-block.d-xs-block.d-sm-block.d-lg-none.d-none
+            ;;  {:src "https://lottie.host/ef992465-b4cc-4919-9bf7-710a6e0533d3/A2l6EIjIoy.json"
+            ;;   :background "transparent"
+            ;;   :speed "1"
+            ;;   :autoplay ""}]
+            ]]
           [:a.btn.btn_launchapp
            {:role "button"
             :on-click #(re-frame/dispatch [::events/navigate :product-index])}
@@ -201,71 +217,41 @@
           "Gabby is free and easy to use"]
          [:div.bottom_section_text
           "This is an experiment from 3 friends that want to get 100 strangers (future friends) to go through it :) If you like hearing from us please add your email and we will make sure to keep you informed :)"]
-         
-         [mailerlite-embedded-form]
-         [:form#subscribe-form.subscribe-form
-          {:style {:display "none"}}
-          [:div.row.align-items-center
-           [:div.col-xs-12.col-sm-12.col-md-5.offset-md-2.mt-2
-            [:label.sr-only
-             {:for "inlineFormInputEmail"}
-             "Email"]
-            [:input
-             {:type "email"
-              :name "email"
-              :required true
-              :class "form-control"
-              :id "inlineFormInputEmail"
-              :placeholder "Enter email address"
-              :value user-email
-              :on-change (fn [ev]
-                          ;;  (.log js/console "form:input" (.-value (.-target ev)) ev)
-                           (re-frame/dispatch [::events/set-user-email (.-value (.-target ev))]))}]]
-           [:div.col-xs-12.col-sm-12.my-2.col-md-3.text-center.mt-3
-            [:button
-             {:type "submit"
-              :class "btn btn_submitemail"
-              :on-click (fn [ev]
-                          ;; (.log js/console "form:submit" user-email ">>" (.-value (.-target ev)))
-                          (.preventDefault ev ev)
-                          (let [no-email? (empty? user-email)]
-                            (when (false? no-email?)
-                              (re-frame/dispatch [::events/subscribe user-email]))))}
-             "SUBSCRIBE"]]]
-          (when (true? user-subscribed?)
-            [:div.row.align-items-center
-             [:div.col.text-center
-              [:div.subscribe_complete_box
-               "Thank you for signing up!"]]])]]]
-               [:div.row.align-items-center.justify-content-center.by-line
-                [:h4 "Experiment from Toronto from 4 "
-                 [:span.icon-smiley-glasses "🤓"]
-                 " with "
-                 [:span.icon-heart "❤️"]]]]]]))
-       
+
+         [mailerlite-embedded-form]]]
+       [:div.row.align-items-center.justify-content-center.by-line
+        [:h4 "Experiment from Toronto from 4 "
+         [:span.icon-smiley-glasses "🤓"]
+         " with "
+         [:span.icon-heart "❤️"]]]]]]))
+
 (defmethod routes/panels :home-panel [] [home-panel])
 
 ;; app
 ;; TODO put inline style in css file
 
-(def product-categories [{:img-src "/images/laptop.svg"
-                          :label "Laptop"}
-                         {:img-src "/images/monitor.svg"
-                          :label "Monitor"}
-                         {:img-src "/images/headphone.svg"
-                          :label "Headphone"}
-                         {:img-src "/images/mouse.svg"
-                          :label "Mouse"}])
+(def product-categories-meta-map {:laptop {:img-src "/images/laptop.svg"
+                                           :label "Laptop"}
+                                  :monitor {:img-src "/images/monitor.svg"
+                                            :label "Monitor"}
+                                  :headphone {:img-src "/images/headphone.svg"
+                                              :label "Headphone"}
+                                  :mouse {:img-src "/images/mouse.svg"
+                                          :label "Mouse"}
+                                  :tv {:img-src "/images/monitor.svg"
+                                       :label "TV"}})
 (defn product-index-panel []
-  (reagent/create-class 
+  (reagent/create-class
    {:component-did-mount
     (fn []
-      (.capture js/window.posthog "$pageview"))
+      (.capture js/window.posthog "$pageview")
+      (re-frame/dispatch [::events/get-categories]))
     :reagent-render
     (fn []
-      (let [product-categories product-categories
+      (let [categories-loading? @(re-frame/subscribe [::subs/categories-loading])
             active-panel @(re-frame/subscribe [::subs/get-active-panel])
-            product-label @(re-frame/subscribe [::subs/product-category])]
+            product-label @(re-frame/subscribe [::subs/product-category])
+            product-categories @(re-frame/subscribe [::subs/get-product-categories])]
         [:div.container.product-flow
          {:role "main"}
          [common-header active-panel product-label]
@@ -280,19 +266,36 @@
            [:div.col.mx-auto
             [:div.more_categories_label "We will be adding more product categories after this experiment"]]]
           [:div.product-category-list-container
+          ;;  (if (true? categories-loading?)
+          ;;    [:div.row..product-category-list.product-category-list--loading
+          ;;     (for [item (range 4)]
+          ;;       ^{:key item}
+          ;;       [:div.product-category-container.col-6.col-sm-6.col-md-6.col-lg-3
+          ;;        [:div.product_category
+          ;;         [:div.row.justify-content-center.align-self-center
+          ;;          [:div.shimmer.shimmer--img]]
+          ;;         [:div.row.justify-content-center.align-self-center
+          ;;          [:div.product_category_label.shimmer.shimmer--label]]]])]
            [:div.row.product-category-list
-            (for [product-item product-categories]
+            {:class (if (true? categories-loading?) "product-category-list--loading" "")}
+            (for [product-item (if (true? categories-loading?) (range 4) product-categories)]
               ^{:key product-item}
               [:div.product-category-container.col-6.col-sm-6.col-md-6.col-lg-3
-               [:div.product_category
-                {:name (:label product-item)
-                 :role "button"
-                 :on-click #(re-frame/dispatch [:get-attributes (:label product-item)])} ;; TODO change to button element
-                [:div.row.justify-content-center.align-self-center
-                 [:img
-                  {:src (:img-src product-item)}]]
-                [:div.row.justify-content-center.align-self-center
-                 [:div.product_category_label (:label product-item)]]]])]]]]))}))
+               (if (true? categories-loading?)
+                 [:div.product_category
+                  [:div.row.justify-content-center.align-self-center
+                   [:div.shimmer.shimmer--img]]
+                  [:div.row.justify-content-center.align-self-center
+                   [:div.product_category_label.shimmer.shimmer--label]]]
+                 [:div.product_category
+                  {:name product-item
+                   :role "button"
+                   :on-click #(re-frame/dispatch [:get-attributes product-item])} ;; TODO change to button element
+                  [:div.row.justify-content-center.align-self-center
+                   [:img
+                    {:src (:img-src ((keyword product-item) product-categories-meta-map))}]]
+                  [:div.row.justify-content-center.align-self-center
+                   [:div.product_category_label (:label ((keyword product-item) product-categories-meta-map))]]])])]]]]))}))
 
 
 (defmethod routes/panels :product-index-panel [] [product-index-panel])
@@ -300,7 +303,7 @@
 ;; product-attributes-panel
 
 (defn product-attributes-panel []
-  (reagent/create-class 
+  (reagent/create-class
    {:component-did-mount
     (fn []
       (.capture js/window.posthog "$pageview"))
@@ -325,7 +328,6 @@
              [:div.col-sm
               [:div#step "Step 2"]]]
             [:div.row
-             {:style {:padding-top "1.5rem"}}
              [:div.col.mx-auto
               [:div#step2_instruction
                "Choose "
@@ -343,14 +345,14 @@
                [:div.align-items-center.justify-content-center.my-4
                 [:div.btn-group-toggle
                  [:label.btn.attribute_tag
-                  [:input.shimmer.shimmer_attribute_tag]]
+                  [:div.shimmer.shimmer_attribute_tag]]
                  [:label.btn.attribute_tag
-                  [:input.shimmer.shimmer_attribute_tag]]
-                 [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline
-                  [:input.shimmer.shimmer_attribute_tag]]
-                 [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline
-                  [:input.shimmer.shimmer_attribute_tag]]]]]
-              ;; Atributes lists 
+                  [:div.shimmer.shimmer_attribute_tag]]
+                 [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline.float-left
+                  [:div.shimmer.shimmer_attribute_tag]]
+                 [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline.float-left
+                  [:div.shimmer.shimmer_attribute_tag]]]]]
+              ;; Atributes lists
               [:div.attributes_list
                (for [group product-attributes]
                  ^{:key group}
@@ -360,7 +362,7 @@
                      ^{:key item}
                      [:label.btn.attribute_tag
                       {:class (when (true? (:selected item)) "active")}
-                      [:input.shimmer.shimmer_attribute_tag
+                      [:input
                        {:type "checkbox"
                         :on-change #(re-frame/dispatch [::events/update-product-attribute item])}]
                       (:phrase item)])]])])
@@ -378,6 +380,41 @@
 (defmethod routes/panels :product-attributes-panel [] [product-attributes-panel])
 
 ;; products page
+(defn review-card [review]
+  (let [expand? (reagent/atom false)]
+    (fn []
+      [:div.modal_review
+       [:div.modal_review_title
+        (:reviewTitle review)]
+       [:p.modal-review--text
+        {:class (if (true? @expand?) "--text-expanded" "--text-collapsed")}
+        (:reviewText review)
+        (when (not (true? @expand?))
+          [:a.modal-review--more-text
+           {:on-click #(reset! expand? true)}
+           "...more"])]
+       [:small (.toLocaleString (js/Date. (:reviewTime review)))]
+       [:b.product-review-modal--filter-tag-sentiment
+        {:class (case (:sentiment review)
+                  "positive" "-tag-positive"
+                  "negative" "-tag-negative"
+                  "")}
+        (case (:sentiment review)
+          "positive" "Positive"
+          "negative" "Negative")]])))
+
+(defn reviews-sentiment-bar [reviews]
+  (let [positive-sentiment-count @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "positive" :context reviews}])
+        negative-sentiment-count @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "negative" :context reviews}])
+        calc-percentage (fn [sentiment-count]
+                          (str (js/Math.ceil (* 100 (/ sentiment-count (count reviews)))) "%"))]
+    [:div.progress
+     [:div.progress-bar.-progress-positive
+      {:role "progressbar"
+       :style {:width (calc-percentage positive-sentiment-count)}}]
+     [:div.progress-bar.-progress-negative
+      {:role "progressbar"
+       :style {:width (calc-percentage negative-sentiment-count)}}]]))
 
 (defn product-reviews-modal
   "description..."
@@ -391,96 +428,113 @@
                                    (.-body)
                                    (.-style)) "")]
     (fn []
-      [v-box :src (at)
-       :children [[:div.num_reviews
-                   {:on-click (fn []
-                                (reset! show? true)
-                                (re-frame/dispatch [::events/get-reviews product])
-                                (freeze-body))}
-                   "See " num-reviews " reviews"]
-                  (when @show?
-                    [modal-panel :src (at)
-                     :backdrop-on-click (fn []
-                                          (reset! show? false)
-                                          (re-frame/dispatch [::events/data-remove-reviews])
-                                          (reset-body-style))
-                     :parts {:child-container {:class "product-reviews-modal-container"}}
-                     :child [:div.__modal-content
-                             [:div.modal-header.product-reviews-modal-header
-                              [:h5.modal-title (:title product)]
-                              [:button.close
-                               {:type "button"
-                                :aria-label "Close"
-                                :on-click (fn []
+      (let [_reviews @(re-frame/subscribe [::subs/product-reviews])
+            reviews-filter-context @(re-frame/subscribe [::subs/reviews-filter-context])
+            _reviews-filtered @(re-frame/subscribe [::subs/filtered-reviews])
+            _reviews-loading @(re-frame/subscribe [::subs/reviews-loading?])
+            sentiment-filter-context @(re-frame/subscribe [::subs/get-reviews-sentiment-context])
+            has-filter (> (count (filter (fn [item] (true? (last item)))  reviews-filter-context)) 0)
+            has-sentiment-filter (or (:negative sentiment-filter-context) (:positive sentiment-filter-context))
+            reviews (if (or has-filter has-sentiment-filter) _reviews-filtered _reviews)
+            ]
+        [v-box :src (at)
+         :children [[:div.num_reviews
+                     {:on-click (fn []
+                                  (reset! show? true)
+                                  (re-frame/dispatch [::events/get-reviews product])
+                                  (freeze-body))}
+                     "See " num-reviews " reviews"]
+                    (when @show?
+                      [modal-panel :src (at)
+                       :backdrop-on-click (fn []
                                             (reset! show? false)
                                             (re-frame/dispatch [::events/data-remove-reviews])
-                                            (reset-body-style))}
-                               [:img {:src "/images/close_icon.svg"}]]]
-                             [:p.product-review-modal--sub-header.d-sm-block.d-block.d-md-none.d-lg-none.d-none
-                              "Showing top 10 reviews of 2,648 Review"]
-                             [:div.product-review-modal--attributes-list
-                              [:div {:class "btn-group-toggle"}
-                               [:label.btn.modal_attribute_tag.active
-                                [:input
-                                 {:type "checkbox"}] "All"
-                                [:span.product-review-modal--attributes-list-count " 1,204"]]
-                               (for [item selected-products]
-                                 ^{:key item}
+                                            (reset-body-style))
+                       :parts {:child-container {:class "product-reviews-modal-container"}}
+                       :child [:div.__modal-content
+                               [:div.modal-header.product-reviews-modal-header
+                                [:h5.modal-title (:title product)]
+                                [:button.close
+                                 {:type "button"
+                                  :aria-label "Close"
+                                  :on-click (fn []
+                                              (reset! show? false)
+                                              (re-frame/dispatch [::events/data-remove-reviews])
+                                              (reset-body-style))}
+                                 [:img {:src "/images/close_icon.svg"}]]]
+                               [:p.product-review-modal--sub-header.d-sm-block.d-block.d-md-none.d-lg-none.d-none
+                                "Showing top 10 reviews of 2,648 Review"]
+                               [:div.product-review-modal--attributes-list
+                                [:div {:class "btn-group-toggle"}
                                  [:label.btn.modal_attribute_tag
+                                  {:class (if (true? has-filter) "" "active")}
                                   [:input
-                                   {:type "checkbox"}] item
-                                  [:span.product-review-modal--attributes-list-count " 100"]])]]
-                             [:div.reviews-modal--sub-filter-group
-                              [:p
-                               "Overall 78% favourable"]
-                              [:div.progress
-                               [:div.progress-bar.-progress-positive
-                                {:role "progressbar"
-                                 :style {:width "80%"}}]
-                               [:div.progress-bar.-progress-negative
-                                {:role "progressbar"
-                                 :style {:width "100%"}}]]
-                              [:div.row.mt-3
-                               [:div.col-6
-                                [:button.reviews-modal--filter-pill-btn.active
-                                 [:b.-text-green "Positive"]
-                                 [:span " (1,789)"]]]
-                               [:div.col-6
-                                [:button.reviews-modal--filter-pill-btn.float-right
-                                 [:b.-text-red "Negative"]
-                                 [:span " (523)"]]]]]
-                             [:div.__modal-body
-                              (when (true? @(re-frame/subscribe [::subs/reviews-loading?]))
-                                (for [loading-item (range 2)]
-                                  ^{:key loading-item}
-                                  [:div.reviews-modal--loading-shimmer
-                                   [:div.shimmer
-                                    {:style {:height "18px"
-                                             :margin-bottom "0.5rem"}}]
-                                   [:div.shimmer
-                                    {:style {:height "18px"
-                                             :margin-bottom "1rem"
-                                             :width "75%"}}]
-                                   [:div.shimmer
-                                    {:style {:height "18px"
-                                             :width "20%"}}]]))
-                              (when (false? @(re-frame/subscribe [::subs/reviews-loading?]))
-                                [:div.modal_review_content
-                                 (doall (for [review @(re-frame/subscribe [::subs/product-reviews])]
-                                          ^{:key review}
-                                          [:div.modal_review
-                                           [:div.modal_review_title
-                                            (:reviewTitle review)]
-                                           [:p.modal-review--text
-                                            {:class (if (true? (:expanded review)) "--text-expanded" "--text-collapsed")}
-                                            (:reviewText review)
-                                            (when (not (true? (:expanded review)))
-                                              [:a.modal-review--more-text
-                                               {:on-click #(re-frame/dispatch [::events/toggle-expanded-review-text review])}
-                                               "...more"])]
-                                           [:small (.toLocaleString (js/Date. (:reviewTime review)))]
-                                           [:b.product-review-modal--filter-tag-positive "Positive"]]))])]]])]])))
+                                   {:type "checkbox"
+                                    :on-click #(re-frame/dispatch [::events/reset-filter-context])}] "All"
+                                  [:span.product-review-modal--attributes-list-count " "
+                                   (if _reviews-loading
+                                     [:span.spinner-border.spinner-border-sm
+                                      {:role "status"}
+                                      [:span.sr-only "Loading..."]]
+                                     (count _reviews))]]
+                                 (for [item reviews-filter-context]
+                                   ^{:key (first item)}
+                                   [:label.btn.modal_attribute_tag
+                                    {:class (if (true? (last item))
+                                              "active"
+                                              (if (zero? @(re-frame/subscribe [::subs/count-reviews item])) "disabled" ""))}
+                                    [:input
+                                     {:type "checkbox"
+                                      :on-click #(re-frame/dispatch [::events/update-filter-context {:item item :context reviews-filter-context}])
+                                      :disabled (if (zero? @(re-frame/subscribe [::subs/count-reviews item])) true "")}]
+                                    (first item)
+                                    [:span.product-review-modal--attributes-list-count " "
+                                     (if _reviews-loading
+                                       [:span.spinner-border.spinner-border-sm
+                                        {:role "status"}
+                                        [:span.sr-only "Loading..."]]
+                                       @(re-frame/subscribe [::subs/count-reviews item])
+                                       )]])]]
+                               [:div.reviews-modal--sub-filter-group
+                                [reviews-sentiment-bar reviews]
+                                (when (false? _reviews-loading)
+                                  (doall
+                                   [:div.row.mt-3
+                                     [:div.col-6
+                                      [:button.reviews-modal--filter-pill-btn
+                                       {:on-click #(re-frame/dispatch [::events/toggle-sentiment-filter-context :positive])
+                                        :class (if (true? (:positive sentiment-filter-context)) "active" "")}
+                                       [:b.-text-green "Positive"]
+                                       [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "positive" :context reviews}])]]]
+                                     [:div.col-6
+                                      [:button.reviews-modal--filter-pill-btn.float-right
+                                       {:on-click #(re-frame/dispatch [::events/toggle-sentiment-filter-context :negative])
+                                        :class (if (true? (:negative sentiment-filter-context)) "active" "")}
+                                       [:b.-text-red "Negative"]
+                                       [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "negative" :context reviews}])]]]]))]
+                               [:div.__modal-body
 
+                                (when (true? _reviews-loading)
+                                  (for [loading-item (range 2)]
+                                    ^{:key loading-item}
+                                    [:div.reviews-modal--loading-shimmer
+                                     [:div.shimmer
+                                      {:style {:height "18px"
+                                               :margin-bottom "0.5rem"}}]
+                                     [:div.shimmer
+                                      {:style {:height "18px"
+                                               :margin-bottom "1rem"
+                                               :width "75%"}}]
+                                     [:div.shimmer
+                                      {:style {:height "18px"
+                                               :width "20%"}}]]))
+                                (when (false? _reviews-loading)
+                                  [:div.modal_review_content
+                                   (doall (for [review reviews]
+                                            ^{:key review}
+                                            [review-card review]
+                                            ))])]]])]]))))
+;; TODO refactor make dry
 (defn product-score-class [score]
   (let [score-rounded (->> score (* 100) (Math/round))]
     (cond
@@ -492,7 +546,31 @@
   "description..."
   [product product-score]
   (let [show? (reagent/atom false)
-        reviews-loading? @(re-frame/subscribe [::subs/reviews-loading?])]
+        reviews-loading? @(re-frame/subscribe [::subs/reviews-loading?])
+        freeze-body #(set! (-> js/document
+                               (.-body)
+                               (.-style)
+                               (.-overflow)) "hidden")
+        reset-body-style #(set! (-> js/document
+                                    (.-body)
+                                    (.-style)) "")
+        selected-attributes @(re-frame/subscribe [::subs/selected-attributes])
+        parse-score-level (fn [attribute-name]
+                            (-> ((keyword (str attribute-name "_pbry")) product)
+                                (js/Math.round)
+                                (* 100)))
+        parse-score-level-positive (fn [attribute-name]
+                            (-> ((keyword (str attribute-name "_pos")) product)
+                                (js/Math.round)
+                                (* 100)
+                                (str "%")))
+        parse-score-level-negative (fn [attribute-name]
+                            (-> ((keyword (str attribute-name "_neg")) product)
+                                (js/Math.round)
+                                (* 100)
+                                (str "%")))
+        product-score (fn [score] (.round js/Math (* 100 score)))]
+    (js/console.log "views/product-matching-score-modal" product-score ((keyword "reasonable price_neg_pbry") product) selected-attributes)
     (fn []
       [v-box :src (at)
        :children [[:a.matching_score_header
@@ -511,9 +589,17 @@
                      :backdrop-on-click #(reset! show? false)
                      :parts {:child-container {:class "product-matching-score-modal-container"}}
                      :child [:div.modal-content
-                             [:div.modal-header.text-center
-                              [:h5#score_modal_title.matching_score_modal_title.w-100 
-                               "Matching Score"]]
+                             [:div.modal-header
+                              [:h5#score_modal_title.matching_score_modal_title.w-100
+                               "Matching Score"]
+                              [:button.close
+                               {:type "button"
+                                :aria-label "Close"
+                                :on-click (fn []
+                                            (reset! show? false)
+                                            (re-frame/dispatch [::events/data-remove-reviews])
+                                            (reset-body-style))}
+                               [:img {:src "/images/close_icon.svg"}]]]
                              [:div.row.no-gutters
                               [:div.col-9.product_matchingscore_modal_subheading
                                {:style {:padding-left "1.2rem"}}
@@ -523,33 +609,49 @@
                                 [:div.matching_score_modal_circle
                                  [:div.matching_score_modal_high
                                   [:div.matching_score_modal_num
-                                   "87%"]]]]]] ;; TODO dynamic ref
+                                   (product-score (:score product)) "%"]]]]]] ;; TODO dynamic ref
                              [:div.matching_score_modal_body
                               [:div.matching_score_modal_body_heading.my-4
                                "Attributes"]]
                              [:div.row.matching_score_modal_body_attributescores
-                              [:div.col
+                              [:div.row
                                {:style {:margin-right "0.5rem"}}
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]]
-                              [:div.col
-                               {:style {:margin-right "0.5rem"}}
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]]]]])]])))
+                               (for [item selected-attributes]
+                                 ^{:key item}
+                                 [:section.col-6
+                                  [:div.row
+                                   [:div.col-12.justify-content-between.product-matching-score-modal--attribute-list-heading
+                                            [:div.product_matchingscore_modal_attribute_label item]
+                                            [:div.product_matchingscore_modal_attribute_value (parse-score-level item) " mentions"]]
+                                   [:div.col-12.product-matching-score-modal--sentiment-labels
+                                    [:div.product-matching-score-modal--sentiment-labels-positive.-tag-positive.float-left "Positive "
+                                     [:b (parse-score-level-positive item)]]
+                                    [:div.product-matching-score-modal--sentiment-labels-negative.-tag-negative.float-right "Negative "
+                                     [:b (parse-score-level-negative item)]]]
+                                   [:div.progress.product-matching-score-modal--sentiment-bar
+                                    [:div.progress-bar.-progress-positive
+                                     {:style {:width (parse-score-level-positive item)}}]
+                                    [:div.progress-bar.-progress-negative
+                                     {:style {:width (parse-score-level-negative item)}}]]]])
+                               ;; [:div.row.justify-content-between
+                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
+                               ;; [:div.row.justify-content-between
+                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
+                               ;; [:div.row.justify-content-between
+                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
+                               ]
+                              ;; [:div.col
+                              ;;  {:style {:margin-right "0.5rem"}}
+                              ;;  [:div.row.justify-content-between
+                              ;;   [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                              ;;   [:div.product_matchingscore_modal_attribute_value "92%"]]
+                              ;;  [:div.row.justify-content-between
+                              ;;   [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                              ;;   [:div.product_matchingscore_modal_attribute_value "92%"]]]
+                              ]]])]])))
 
 (defn product-reviews-panel []
   (reagent/create-class
@@ -589,18 +691,16 @@
               "Showing 10 best matched products"]]]
            [:div.row.align-items-center.justify-content-center
             {:style {:padding-top "1.5rem"}}
-            [:div
-             (when (true? products-loading?)
-               [:div.text-center.mb-4
-                [:div.spinner-border.spinner-border-sm
-                 {:role "status"}
-                 [:span.sr-only "Loading..."]]])
-             (when (not products-loading?)
-               [:div#step4_product_stats
-                "Scoured through "
-                [:span#matchedProducts_count.purple1
-                 product-search-result-count " products"]
-                " based on what best mattered to you"])]]
+            [:div#step4_product_stats
+             "Scoured through "
+             (if (not products-loading?)
+               [:span#matchedProducts_count.purple1
+                product-search-result-count " products"]
+                  ;; else
+               [:span.spinner-border.spinner-border-sm
+                {:role "status"}
+                [:span.sr-only "Loading..."]])
+             " based on what best mattered to you"]]
            [:div.feedback_card
             [:div.row.align-items-center
              [:div.col-md-8.col-xs-12
@@ -642,9 +742,9 @@
                  [:div.shimmer
                   {:style {:height "60%"
                            :margin-top "1rem"}}]]]]])
-      ;; ============
-      ;; PRODUCT LIST
-      ;; ============
+          ;; ============
+          ;; PRODUCT LIST
+          ;; ============
            (when (not products-loading?)
              [:div#product_list
               (doall (for [product product-list]
@@ -674,8 +774,8 @@
                         ;;   :data-asin (:asin product)}]
                             [product-reviews-modal
                              product
-                             (:num_reviews product)
-                             @(re-frame/subscribe [::subs/selected-products])]]
+                             (:total product)
+                             @(re-frame/subscribe [::subs/reviews-filter-context])]]
                            [:div.col-lg-8.col-xs-12
                             [:div.product_link
                              [:a
@@ -686,9 +786,14 @@
                            [:div.col-lg-7.col-sm-6
                             "Was this recommendation helpful"]
                            [:div.col-lg-4.col-sm-6
-                            [:button.btn.thumbs_btn.thumbs_up.thumbs_up_inactive
-                             {:style {:margin-right "0.5rem"}}]
-                            [:button.btn.thumbs_btn.thumbs_down.thumbs_down_inactive]]]]
+                            [:button.btn.thumbs_btn.thumbs_up.__thumbs_up_active
+                             {:style {:margin-right "0.5rem"}
+                              :class (if (true? (:liked product)) "thumbs_up_active" "thumbs_up_inactive")
+                              :on-click #(re-frame/dispatch [::events/like product])}]
+                            [:button.btn.thumbs_btn.thumbs_down.__thumbs_down_inactive
+                             {:class (if (true? (:disliked product)) "thumbs_down_active" "thumbs_down_inactive")
+                              :on-click #(re-frame/dispatch [::events/dislike product])}
+                             ]]]]
                          [:div.col-md-2.product_score
                           {:style {:padding-left "0"}}
                      ;; Matching score modal
@@ -720,8 +825,12 @@
                           "Was this helpful"]
                          [:div.col-6
                           [:button.btn.thumbs_btn.thumbs_up.thumbs_up_inactive
-                           {:style {:margin-right "0.5rem"}}]
-                          [:button.btn.thumbs_btn.thumbs_down.thumbs_down_inactive]]]]))])]])))}))
+                           {:style {:margin-right "0.5rem"}
+                            :class (if (true? (:liked product)) "thumbs_up_active" "thumbs_up_inactive")
+                            :on-click #(re-frame/dispatch [::events/like product])}]
+                          [:button.btn.thumbs_btn.thumbs_down.thumbs_down_inactive
+                           {:class (if (true? (:disliked product)) "thumbs_down_active" "thumbs_down_inactive")
+                            :on-click #(re-frame/dispatch [::events/dislike product])}]]]]))])]])))}))
 
 (defmethod routes/panels :product-reviews-panel [] [product-reviews-panel])
 

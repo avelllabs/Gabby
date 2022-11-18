@@ -31,7 +31,7 @@
 
 (re-frame/reg-sub
  ::product-category
- (fn [db] 
+ (fn [db]
    (:product-category db)))
 
 (re-frame/reg-sub
@@ -76,7 +76,7 @@
 
 (re-frame/reg-sub
  ::selected-products
- (fn [db] 
+ (fn [db]
    (->> (:data-get-attributes db)
         (filterv (fn [x]
                    (when (true? (:selected x)) x)))
@@ -96,10 +96,82 @@
 
 (re-frame/reg-sub
  ::product-reviews
- (fn [db] 
+ (fn [db]
    (:data-get-reviews db)))
 
 (re-frame/reg-sub
  ::get-visible-product-attributes-count
  (fn [db]
    (:visible-attributes db)))
+
+(re-frame/reg-sub
+ ::get-product-categories
+ (fn [db]
+   (:data-get-categories db)))
+
+(re-frame/reg-sub
+ ::filtered-reviews
+ (fn [db]
+   (let [filter-context (->> (mapv (fn [item] (when (true? (last item)) [(first item)])) (:reviews-filter-context db))
+                             (filterv some?))
+         reviews (:data-reviews-grouped db)
+         all-reviews-grouped-by-sentiment (group-by :sentiment (:data-get-reviews db))
+         sentiment-context (:reviews-sentiment-filter-context db)
+         reviews-grouped-by-sentiment (group-by :sentiment (mapcat reviews filter-context))]
+    ;;  (js/console.log "::subs/filtered-reviews" "empty?" (empty? filter-context) "positive:true?" (true? (:positive sentiment-context)) "negative:false?" (false? (:negative sentiment-context)) ">" sentiment-context ">>" all-reviews-grouped-by-sentiment ">>>" (mapcat all-reviews-grouped-by-sentiment ["negative"]))
+    ;;  (:data-reviews-filtered db)
+     (cond
+       (and (empty? filter-context) (true? (:positive sentiment-context)) (false? (:negative sentiment-context))) (mapcat all-reviews-grouped-by-sentiment ["positive"])
+       (and (empty? filter-context) (false? (:positive sentiment-context)) (true? (:negative sentiment-context))) (mapcat all-reviews-grouped-by-sentiment ["negative"])
+       (and (empty? filter-context) (true? (:positive sentiment-context)) (true? (:negative sentiment-context))) (:data-get-reviews db)
+       (and (true? (:positive sentiment-context)) (false? (:negative sentiment-context))) (mapcat reviews-grouped-by-sentiment ["positive"])
+       (and (false? (:positive sentiment-context)) (true? (:negative sentiment-context))) (mapcat reviews-grouped-by-sentiment ["negative"])
+       :else (mapcat reviews filter-context)))))
+
+(re-frame/reg-sub
+ ::reviews-filter-context
+ (fn [db]
+  ;;  (js/console.log "::subs/reviews-filter-context" (:reviews-filter-context db))
+   (:reviews-filter-context db)))
+
+(re-frame/reg-sub
+ ::get-reviews-sentiment-context
+ (fn [db]
+   (:reviews-sentiment-filter-context db)))
+
+(re-frame/reg-sub
+ ::count-reviews
+ (fn [db [_ param]]
+  ;;  (js/console.log "::subs/count-reviews" param)
+   (count (get-in db [:data-reviews-grouped [(first param)]]))))
+
+(re-frame/reg-sub
+ ::count-review-sentiments
+ (fn [db [_ {:keys [sentiment context]}]]
+  ;;  (js/console.log "::subs/count-review-sentiments 000" sentiment (-> (group-by :sentiment context)
+  ;;                                                             (keep [sentiment])
+  ;;                                                             (flatten)
+  ;;                                                             ))
+   (let [filter-context (->> (mapv (fn [item] (when (true? (last item)) [(first item)])) (:reviews-filter-context db))
+                             (filterv some?))
+         reviews-context (if (empty? filter-context)
+                           (:data-get-reviews db)
+                           (-> (:data-reviews-grouped db)
+                               (keep filter-context)
+                               (flatten)))
+         sentiment-context (:reviews-sentiment-filter-context db)]
+    ;;  (js/console.log "::subs/count-review-sentiments 001" filter-context ">>" reviews-context ">>>" (some true? (vals sentiment-context)))
+     (-> (group-by :sentiment reviews-context)
+         (keep [sentiment])
+         (flatten)
+         (count)))))
+
+(re-frame/reg-sub
+ ::categories-loading
+ (fn [db]
+   (:categories-loading? db)))
+
+(re-frame/reg-sub
+ ::selected-attributes
+ (fn [db]
+   (:selected-attributes db)))
