@@ -31,7 +31,7 @@
 
 (re-frame/reg-sub
  ::product-category
- (fn [db] 
+ (fn [db]
    (:product-category db)))
 
 (re-frame/reg-sub
@@ -76,7 +76,7 @@
 
 (re-frame/reg-sub
  ::selected-products
- (fn [db] 
+ (fn [db]
    (->> (:data-get-attributes db)
         (filterv (fn [x]
                    (when (true? (:selected x)) x)))
@@ -96,7 +96,7 @@
 
 (re-frame/reg-sub
  ::product-reviews
- (fn [db] 
+ (fn [db]
    (:data-get-reviews db)))
 
 (re-frame/reg-sub
@@ -120,7 +120,7 @@
          reviews-grouped-by-sentiment (group-by :sentiment (mapcat reviews filter-context))]
     ;;  (js/console.log "::subs/filtered-reviews" "empty?" (empty? filter-context) "positive:true?" (true? (:positive sentiment-context)) "negative:false?" (false? (:negative sentiment-context)) ">" sentiment-context ">>" all-reviews-grouped-by-sentiment ">>>" (mapcat all-reviews-grouped-by-sentiment ["negative"]))
     ;;  (:data-reviews-filtered db)
-     (cond  
+     (cond
        (and (empty? filter-context) (true? (:positive sentiment-context)) (false? (:negative sentiment-context))) (mapcat all-reviews-grouped-by-sentiment ["positive"])
        (and (empty? filter-context) (false? (:positive sentiment-context)) (true? (:negative sentiment-context))) (mapcat all-reviews-grouped-by-sentiment ["negative"])
        (and (empty? filter-context) (true? (:positive sentiment-context)) (true? (:negative sentiment-context))) (:data-get-reviews db)
@@ -130,7 +130,7 @@
 
 (re-frame/reg-sub
  ::reviews-filter-context
- (fn [db]   
+ (fn [db]
   ;;  (js/console.log "::subs/reviews-filter-context" (:reviews-filter-context db))
    (:reviews-filter-context db)))
 
@@ -165,3 +165,13 @@
          (keep [sentiment])
          (flatten)
          (count)))))
+
+(re-frame/reg-sub
+ ::categories-loading
+ (fn [db]
+   (:categories-loading? db)))
+
+(re-frame/reg-sub
+ ::selected-attributes
+ (fn [db]
+   (:selected-attributes db)))

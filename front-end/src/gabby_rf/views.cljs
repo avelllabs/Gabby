@@ -7,12 +7,12 @@
    [re-frame.core :as re-frame]
    [reagent.core :as reagent]
    [clojure.string :as str]))
-   
 
-(def attributes-list 
-  [{:label "Decent Price"} 
-   {:label "Color" :active true} 
-   {:label "Quality build"} 
+
+(def attributes-list
+  [{:label "Decent Price"}
+   {:label "Color" :active true}
+   {:label "Quality build"}
    {:label "Customer service"}
    {:label "Volume"}
    {:label "Brightness" :active true}
@@ -85,7 +85,7 @@
 (defn mailerlite-embedded-form []
   (reagent/create-class
    {:component-did-mount
-    (fn [] 
+    (fn []
       ;; (println "I mounted")
       ;; ml.fn.renderEmbeddedForm
       ;; (let [ml "ml"
@@ -186,7 +186,7 @@
           ;;   :autoplay ""
           ;;   }]
           ]
-         
+
          [:div.col-sm-8.col-md-8.col-lg-5.text-left
           [:div.section_heading
            "We'll do the work"]
@@ -224,7 +224,7 @@
          [:span.icon-smiley-glasses "🤓"]
          " with "
          [:span.icon-heart "❤️"]]]]]]))
-       
+
 (defmethod routes/panels :home-panel [] [home-panel])
 
 ;; app
@@ -241,16 +241,17 @@
                                   :tv {:img-src "/images/monitor.svg"
                                        :label "TV"}})
 (defn product-index-panel []
-  (reagent/create-class 
+  (reagent/create-class
    {:component-did-mount
     (fn []
-      (.capture js/window.posthog "$pageview"))
+      (.capture js/window.posthog "$pageview")
+      (re-frame/dispatch [::events/get-categories]))
     :reagent-render
     (fn []
-      (let [active-panel @(re-frame/subscribe [::subs/get-active-panel])
+      (let [categories-loading? @(re-frame/subscribe [::subs/categories-loading])
+            active-panel @(re-frame/subscribe [::subs/get-active-panel])
             product-label @(re-frame/subscribe [::subs/product-category])
-            product-categories (re-frame/dispatch [::events/get-categories])]
-        
+            product-categories @(re-frame/subscribe [::subs/get-product-categories])]
         [:div.container.product-flow
          {:role "main"}
          [common-header active-panel product-label]
@@ -265,19 +266,36 @@
            [:div.col.mx-auto
             [:div.more_categories_label "We will be adding more product categories after this experiment"]]]
           [:div.product-category-list-container
+          ;;  (if (true? categories-loading?)
+          ;;    [:div.row..product-category-list.product-category-list--loading
+          ;;     (for [item (range 4)]
+          ;;       ^{:key item}
+          ;;       [:div.product-category-container.col-6.col-sm-6.col-md-6.col-lg-3
+          ;;        [:div.product_category
+          ;;         [:div.row.justify-content-center.align-self-center
+          ;;          [:div.shimmer.shimmer--img]]
+          ;;         [:div.row.justify-content-center.align-self-center
+          ;;          [:div.product_category_label.shimmer.shimmer--label]]]])]
            [:div.row.product-category-list
-            (for [product-item @(re-frame/subscribe [::subs/get-product-categories])]
+            {:class (if (true? categories-loading?) "product-category-list--loading" "")}
+            (for [product-item (if (true? categories-loading?) (range 4) product-categories)]
               ^{:key product-item}
               [:div.product-category-container.col-6.col-sm-6.col-md-6.col-lg-3
-               [:div.product_category
-                {:name product-item
-                 :role "button"
-                 :on-click #(re-frame/dispatch [:get-attributes product-item])} ;; TODO change to button element
-                [:div.row.justify-content-center.align-self-center
-                 [:img
-                  {:src (:img-src ((keyword product-item) product-categories-meta-map))}]]
-                [:div.row.justify-content-center.align-self-center
-                 [:div.product_category_label (:label ((keyword product-item) product-categories-meta-map))]]]])]]]]))}))
+               (if (true? categories-loading?)
+                 [:div.product_category
+                  [:div.row.justify-content-center.align-self-center
+                   [:div.shimmer.shimmer--img]]
+                  [:div.row.justify-content-center.align-self-center
+                   [:div.product_category_label.shimmer.shimmer--label]]]
+                 [:div.product_category
+                  {:name product-item
+                   :role "button"
+                   :on-click #(re-frame/dispatch [:get-attributes product-item])} ;; TODO change to button element
+                  [:div.row.justify-content-center.align-self-center
+                   [:img
+                    {:src (:img-src ((keyword product-item) product-categories-meta-map))}]]
+                  [:div.row.justify-content-center.align-self-center
+                   [:div.product_category_label (:label ((keyword product-item) product-categories-meta-map))]]])])]]]]))}))
 
 
 (defmethod routes/panels :product-index-panel [] [product-index-panel])
@@ -285,7 +303,7 @@
 ;; product-attributes-panel
 
 (defn product-attributes-panel []
-  (reagent/create-class 
+  (reagent/create-class
    {:component-did-mount
     (fn []
       (.capture js/window.posthog "$pageview"))
@@ -334,7 +352,7 @@
                   [:div.shimmer.shimmer_attribute_tag]]
                  [:label.btn.attribute_tag.d-xs-none.d-sm-none.d-none.d-md-inline.float-left
                   [:div.shimmer.shimmer_attribute_tag]]]]]
-              ;; Atributes lists 
+              ;; Atributes lists
               [:div.attributes_list
                (for [group product-attributes]
                  ^{:key group}
@@ -344,7 +362,7 @@
                      ^{:key item}
                      [:label.btn.attribute_tag
                       {:class (when (true? (:selected item)) "active")}
-                      [:input.shimmer.shimmer_attribute_tag
+                      [:input
                        {:type "checkbox"
                         :on-change #(re-frame/dispatch [::events/update-product-attribute item])}]
                       (:phrase item)])]])])
@@ -362,8 +380,8 @@
 (defmethod routes/panels :product-attributes-panel [] [product-attributes-panel])
 
 ;; products page
-(defn review-block [review]
-  (let [expand? (reagent/atom false)] 
+(defn review-card [review]
+  (let [expand? (reagent/atom false)]
     (fn []
       [:div.modal_review
        [:div.modal_review_title
@@ -381,7 +399,22 @@
                   "positive" "-tag-positive"
                   "negative" "-tag-negative"
                   "")}
-        (:sentiment review)]])))
+        (case (:sentiment review)
+          "positive" "Positive"
+          "negative" "Negative")]])))
+
+(defn reviews-sentiment-bar [reviews]
+  (let [positive-sentiment-count @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "positive" :context reviews}])
+        negative-sentiment-count @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "negative" :context reviews}])
+        calc-percentage (fn [sentiment-count]
+                          (str (js/Math.ceil (* 100 (/ sentiment-count (count reviews)))) "%"))]
+    [:div.progress
+     [:div.progress-bar.-progress-positive
+      {:role "progressbar"
+       :style {:width (calc-percentage positive-sentiment-count)}}]
+     [:div.progress-bar.-progress-negative
+      {:role "progressbar"
+       :style {:width (calc-percentage negative-sentiment-count)}}]]))
 
 (defn product-reviews-modal
   "description..."
@@ -438,26 +471,34 @@
                                   [:input
                                    {:type "checkbox"
                                     :on-click #(re-frame/dispatch [::events/reset-filter-context])}] "All"
-                                  [:span.product-review-modal--attributes-list-count " " (count _reviews)]]
+                                  [:span.product-review-modal--attributes-list-count " "
+                                   (if _reviews-loading
+                                     [:span.spinner-border.spinner-border-sm
+                                      {:role "status"}
+                                      [:span.sr-only "Loading..."]]
+                                     (count _reviews))]]
                                  (for [item reviews-filter-context]
                                    ^{:key (first item)}
                                    [:label.btn.modal_attribute_tag
-                                    {:class (if (true? (last item)) "active" "")}
+                                    {:class (if (true? (last item))
+                                              "active"
+                                              (if (zero? @(re-frame/subscribe [::subs/count-reviews item])) "disabled" ""))}
                                     [:input
                                      {:type "checkbox"
-                                      :on-click #(re-frame/dispatch [::events/update-filter-context {:item item :context reviews-filter-context}])}] 
+                                      :on-click #(re-frame/dispatch [::events/update-filter-context {:item item :context reviews-filter-context}])
+                                      :disabled (if (zero? @(re-frame/subscribe [::subs/count-reviews item])) true "")}]
                                     (first item)
-                                    [:span.product-review-modal--attributes-list-count " " @(re-frame/subscribe [::subs/count-reviews item])]])]]
+                                    [:span.product-review-modal--attributes-list-count " "
+                                     (if _reviews-loading
+                                       [:span.spinner-border.spinner-border-sm
+                                        {:role "status"}
+                                        [:span.sr-only "Loading..."]]
+                                       @(re-frame/subscribe [::subs/count-reviews item])
+                                       )]])]]
                                [:div.reviews-modal--sub-filter-group
-                                [:div.progress
-                                 [:div.progress-bar.-progress-positive
-                                  {:role "progressbar"
-                                   :style {:width "80%"}}]
-                                 [:div.progress-bar.-progress-negative
-                                  {:role "progressbar"
-                                   :style {:width "100%"}}]]
-                                (when (false? _reviews-loading) 
-                                  (doall 
+                                [reviews-sentiment-bar reviews]
+                                (when (false? _reviews-loading)
+                                  (doall
                                    [:div.row.mt-3
                                      [:div.col-6
                                       [:button.reviews-modal--filter-pill-btn
@@ -472,7 +513,7 @@
                                        [:b.-text-red "Negative"]
                                        [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "negative" :context reviews}])]]]]))]
                                [:div.__modal-body
-                                
+
                                 (when (true? _reviews-loading)
                                   (for [loading-item (range 2)]
                                     ^{:key loading-item}
@@ -491,7 +532,7 @@
                                   [:div.modal_review_content
                                    (doall (for [review reviews]
                                             ^{:key review}
-                                            [review-block review]
+                                            [review-card review]
                                             ))])]]])]]))))
 ;; TODO refactor make dry
 (defn product-score-class [score]
@@ -512,7 +553,24 @@
                                (.-overflow)) "hidden")
         reset-body-style #(set! (-> js/document
                                     (.-body)
-                                    (.-style)) "")]
+                                    (.-style)) "")
+        selected-attributes @(re-frame/subscribe [::subs/selected-attributes])
+        parse-score-level (fn [attribute-name]
+                            (-> ((keyword (str attribute-name "_pbry")) product)
+                                (js/Math.round)
+                                (* 100)))
+        parse-score-level-positive (fn [attribute-name]
+                            (-> ((keyword (str attribute-name "_pos")) product)
+                                (js/Math.round)
+                                (* 100)
+                                (str "%")))
+        parse-score-level-negative (fn [attribute-name]
+                            (-> ((keyword (str attribute-name "_neg")) product)
+                                (js/Math.round)
+                                (* 100)
+                                (str "%")))
+        product-score (fn [score] (.round js/Math (* 100 score)))]
+    (js/console.log "views/product-matching-score-modal" product-score ((keyword "reasonable price_neg_pbry") product) selected-attributes)
     (fn []
       [v-box :src (at)
        :children [[:a.matching_score_header
@@ -532,7 +590,7 @@
                      :parts {:child-container {:class "product-matching-score-modal-container"}}
                      :child [:div.modal-content
                              [:div.modal-header
-                              [:h5#score_modal_title.matching_score_modal_title.w-100 
+                              [:h5#score_modal_title.matching_score_modal_title.w-100
                                "Matching Score"]
                               [:button.close
                                {:type "button"
@@ -551,33 +609,49 @@
                                 [:div.matching_score_modal_circle
                                  [:div.matching_score_modal_high
                                   [:div.matching_score_modal_num
-                                   "87%"]]]]]] ;; TODO dynamic ref
+                                   (product-score (:score product)) "%"]]]]]] ;; TODO dynamic ref
                              [:div.matching_score_modal_body
                               [:div.matching_score_modal_body_heading.my-4
                                "Attributes"]]
                              [:div.row.matching_score_modal_body_attributescores
-                              [:div.col
+                              [:div.row
                                {:style {:margin-right "0.5rem"}}
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]]
-                              [:div.col
-                               {:style {:margin-right "0.5rem"}}
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               [:div.row.justify-content-between
-                                [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                                [:div.product_matchingscore_modal_attribute_value "92%"]]]]]])]])))
+                               (for [item selected-attributes]
+                                 ^{:key item}
+                                 [:section.col-6
+                                  [:div.row
+                                   [:div.col-12.justify-content-between.product-matching-score-modal--attribute-list-heading
+                                            [:div.product_matchingscore_modal_attribute_label item]
+                                            [:div.product_matchingscore_modal_attribute_value (parse-score-level item) " mentions"]]
+                                   [:div.col-12.product-matching-score-modal--sentiment-labels
+                                    [:div.product-matching-score-modal--sentiment-labels-positive.-tag-positive.float-left "Positive "
+                                     [:b (parse-score-level-positive item)]]
+                                    [:div.product-matching-score-modal--sentiment-labels-negative.-tag-negative.float-right "Negative "
+                                     [:b (parse-score-level-negative item)]]]
+                                   [:div.progress.product-matching-score-modal--sentiment-bar
+                                    [:div.progress-bar.-progress-positive
+                                     {:style {:width (parse-score-level-positive item)}}]
+                                    [:div.progress-bar.-progress-negative
+                                     {:style {:width (parse-score-level-negative item)}}]]]])
+                               ;; [:div.row.justify-content-between
+                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
+                               ;; [:div.row.justify-content-between
+                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
+                               ;; [:div.row.justify-content-between
+                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
+                               ]
+                              ;; [:div.col
+                              ;;  {:style {:margin-right "0.5rem"}}
+                              ;;  [:div.row.justify-content-between
+                              ;;   [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                              ;;   [:div.product_matchingscore_modal_attribute_value "92%"]]
+                              ;;  [:div.row.justify-content-between
+                              ;;   [:div.product_matchingscore_modal_attribute_label "Attributes"]
+                              ;;   [:div.product_matchingscore_modal_attribute_value "92%"]]]
+                              ]]])]])))
 
 (defn product-reviews-panel []
   (reagent/create-class

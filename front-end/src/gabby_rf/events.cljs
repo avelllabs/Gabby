@@ -28,7 +28,7 @@
  (fn [db [_ response]]
   ;;  (.log js/console db response)
    (-> db
-       (assoc :loading? false)
+       (assoc :categories-loading? false)
        (assoc :data-get-categories (js->clj response)))))
 
 (re-frame/reg-event-db
@@ -37,7 +37,7 @@
    ;; TODO handle failure
    ;; (.log js/console "failure" db response)
    (-> db
-       (assoc :loading? false))))
+       (assoc :categories-loading? false))))
 
 (re-frame/reg-event-fx
  ::get-categories
@@ -52,7 +52,7 @@
                  :on-success [:get-categories-on-response-success]
                  :on-failure [:get-categories-on-response-failure]}
     :db (-> db
-            (assoc :loading? true))}))
+            (assoc :categories-loading? true))}))
 
 ;; /getAttributes
 
@@ -122,9 +122,9 @@
  ;; POST
  ;; attributes [attribute]
 
- ;; 
+ ;;
  [(re-frame/inject-cofx :get-products-params)]
- 
+
  ;;
  (fn [{:keys [db products-params]} _]
    (.log js/console "jk debug /getProducts" products-params  {:db db})
@@ -138,7 +138,7 @@
                  :on-failure [:get-products-on-response-failure]}
     :db (-> db
             (assoc :products-loading? true)
-            (assoc :chosen-products products-params))
+            (assoc :selected-attributes products-params))
     :navigate [:product-reviews :produit (:product-category db)]}))
 
 (re-frame/reg-cofx
@@ -191,7 +191,7 @@
                  :on-failure [:get-reviews-on-response-failure]}
     :db (-> db
             (assoc :reviews-loading? true)
-            (assoc :reviews-filter-context (mapv (fn [item] [item false]) (:chosen-products db))))}))
+            (assoc :reviews-filter-context (mapv (fn [item] [item false]) (:selected-attributes db))))}))
 
 (re-frame/reg-event-db
  ::data-remove-reviews
@@ -231,9 +231,9 @@
 ;; POST
 ;; payload email=u%40co.co&signup_date=2022-10-09+18%3A02%3A09+GMT%E2%88%9204%3A00+%5BAmerica%2FToronto%5D
 ;; form data
-;; email: 
+;; email:
 ;; u@co.co
-;; signup_date: 
+;; signup_date:
 ;; 2022-10-09 18:02:09 GMT−04:00 [America/Toronto]
 (re-frame/reg-event-fx
  ::subscribe

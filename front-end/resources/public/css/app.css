@@ -57,6 +57,16 @@ body {
 	text-fill-color: transparent;
 }
 
+.product-category-list--loading .shimmer.shimmer--img {
+	height: 60px;
+	width: 60%;
+}
+
+.product-category-list--loading .shimmer.shimmer--label {
+	height: 20px;
+	width: 60%;
+}
+
 #step2_instruction,
 #step_instruction,
 .step_instruction {
@@ -78,7 +88,7 @@ body {
 }
 
 /* #step2_instruction {
-	
+
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: 400;
@@ -819,6 +829,8 @@ body {
 	line-height: 30px;
 	letter-spacing: -0.02em;
 	color: #000000;
+        float: left;
+        text-transform: capitalize;
 }
 
 .product_matchingscore_modal_attribute_value {
@@ -830,6 +842,7 @@ body {
 	line-height: 30px;
 	letter-spacing: -0.02em;
 	color: #50448A;
+        float: right;
 }
 
 .shimmer {
@@ -1863,4 +1876,8 @@ img.d-block.d-xs-block.d-sm-block {
 
 .product-reviews-modal-header {
 	border: none;
+}
+.product-matching-score-modal--sentiment-bar {
+  height: 4px;
+  margin: 0 15px 10px;
 }
