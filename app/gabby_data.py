@@ -371,7 +371,7 @@ def get_products_for_attributes_v2(category, attribute_list):
     product_attribute_counts = product_attribute_counts.rename(columns={ 
                     c:f"{'_'.join(c.split())}_num_reviews" for c in product_attribute_counts.columns[1:]
                 })
-    product_attribute_counts['total'] = product_attribute_counts[product_attribute_counts.columns[1:]].sum(axis=1)
+    product_attribute_counts['total_reviews_in_context'] = product_attribute_counts[product_attribute_counts.columns[1:]].sum(axis=1)
     for phrase in product_attribute_counts.columns[1:-1]:
         for phrase in product_attribute_counts.columns[1:-1]:
             product_attribute_counts[f"{phrase}_pbry"] = \
