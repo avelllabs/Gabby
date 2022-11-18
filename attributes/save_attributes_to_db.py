@@ -15,13 +15,13 @@ import pickle
 from tqdm import tqdm
 tqdm.pandas()
 
-sys.path.append('../')
+sys.path.append('../app')
 
 import db_utils
 
 # Setting up database connections
 config = configparser.ConfigParser()
-config.read('../db_config.ini')  
+config.read('../app/db_config.ini')  
 
 conn = None
 
