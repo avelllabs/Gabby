@@ -9,6 +9,7 @@
 
 (defonce base-url (if config/debug? "http://localhost:5000" "https://gabby-f6171.uc.r.appspot.com"))
 
+
 (re-frame/reg-event-db
  ::initialize-db
  (fn-traced [_ _]
@@ -48,8 +49,6 @@
  ;; https://joingabby.com/getCategories
  ;; GET
  (fn [{db :db} _]
-   ;;(.log js/console {:db db :p params})
-   ;; (js/console.log "jk debug getCategories" config/debug?)
    {:http-xhrio {:method :get
                  :uri (str base-url "/getCategories")
                  :response-format (ajax/json-response-format {:keywords? true})
