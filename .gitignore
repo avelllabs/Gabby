@@ -5,3 +5,6 @@ app/databases/gabbydb.sqlite
 front-end/.calva/output-window/output.calva-repl
 /.clj-kondo/
 /.lsp/
+
+# Local Netlify folder
+.netlify

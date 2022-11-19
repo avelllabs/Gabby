@@ -4,7 +4,10 @@
             [day8.re-frame.tracing :refer-macros [fn-traced]]
             [gabby-rf.db :as db]
             [re-frame.core :as re-frame]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [gabby-rf.config :as config]))
+
+(defonce base-url (if config/debug? "http://localhost:5000" "https://gabby-f6171.uc.r.appspot.com"))
 
 (re-frame/reg-event-db
  ::initialize-db
@@ -20,6 +23,7 @@
  ::set-active-panel
  (fn-traced [{:keys [db]} [_ active-panel]]
             {:db (assoc db :active-panel active-panel)}))
+
 
 
 ;; /getCategories
@@ -45,8 +49,9 @@
  ;; GET
  (fn [{db :db} _]
    ;;(.log js/console {:db db :p params})
+   ;; (js/console.log "jk debug getCategories" config/debug?)
    {:http-xhrio {:method :get
-                 :uri "https://gabby-f6171.uc.r.appspot.com/getCategories"
+                 :uri (str base-url "/getCategories")
                  :response-format (ajax/json-response-format {:keywords? true})
                  :format (ajax/json-request-format)
                  :on-success [:get-categories-on-response-success]
@@ -72,15 +77,18 @@
    (-> db
        (assoc :loading? false))))
 
+
+
 (re-frame/reg-event-fx
  :get-attributes
  ;; https://joingabby.com/getAttributes
  ;; POST
  ;; category string
+ ;;
  (fn [{db :db} params]
    (.log js/console "jk debug /getAttributes" {:db db :p params} (last params))
    {:http-xhrio {:method :post
-                 :uri "https://gabby-f6171.uc.r.appspot.com/getAttributes"
+                 :uri (str base-url "/getAttributes")
                  :response-format (ajax/json-response-format {:keywords? true})
                  :format (ajax/json-request-format)
                  :params {:category (str/lower-case (last params))}
@@ -129,7 +137,7 @@
  (fn [{:keys [db products-params]} _]
    (.log js/console "jk debug /getProducts" products-params  {:db db})
    {:http-xhrio {:method :post
-                 :uri "https://gabby-f6171.uc.r.appspot.com/getProducts"
+                 :uri (str base-url "/getProducts")
                  :response-format (ajax/json-response-format {:keywords? true})
                  :format (ajax/json-request-format)
                  :params {:attributes products-params
@@ -173,15 +181,16 @@
  ::get-reviews
   ;; https://joingabby.com/getReviews
   ;; POST
-  ;; payload {"asin":"B0148NNKTC","attributes":["the display","this issue","these monitors"]}
+ ;; payload {"asin":"B0148NNKTC","attributes":["the display","this issue","these monitors"]}
 
  [(re-frame/inject-cofx :get-products-params)]
 
  ;;
  (fn [{:keys [db products-params]} [_ product]]
-  ;;  (.log js/console "::subs/get-reviews" product (:product-category db))
+
+   ;;  (.log js/console "::subs/get-reviews" product (:product-category db))
    {:http-xhrio {:method :post
-                 :uri "https://gabby-f6171.uc.r.appspot.com/getReviews"
+                 :uri (str base-url "/getReviews")
                  :response-format (ajax/json-response-format {:keywords? true})
                  :format (ajax/json-request-format)
                  :params {:attributes products-params
@@ -200,92 +209,22 @@
        (assoc :data-get-reviews [])
        (assoc :data-reviews-grouped {}))))
 
-;; /subscribe
-;; DEPRECATED - REMOVE IMPLEMENTATION
-(re-frame/reg-event-db
- :gabby-subscribe-on-response-success
- (fn [db [_ _]]
-   (js/setTimeout #(re-frame/dispatch [::reset-subscribe-success-status]) 3000)
-   (-> db
-       (assoc :subscribe-loading? false)
-       (assoc :user-subscribed? true))))
-
-(re-frame/reg-event-db
- :gabby-subscribe-on-response-failure
- (fn [db [_ _]]
-   (-> db
-       (assoc :subscribe-has-error? true)
-       (assoc :subscribe-loading? false))))
-
-;; (re-frame/reg-event-fx
-;;  ::reset-subscribe-error-context
-;;  (fn [{db :db} [_ _]]
-;;    {:db (assoc db :subscribe-has-error? true)}))
-
-(re-frame/reg-event-db
- ::reset-subscribe-success-status
- (fn [db [_ _]]
-  ;;  (.log js/console "::reset-subscribe-success-status" db)
-   (assoc db :user-subscribed? false)))
-
-;; POST
-;; payload email=u%40co.co&signup_date=2022-10-09+18%3A02%3A09+GMT%E2%88%9204%3A00+%5BAmerica%2FToronto%5D
-;; form data
-;; email:
-;; u@co.co
-;; signup_date:
-;; 2022-10-09 18:02:09 GMT−04:00 [America/Toronto]
-(re-frame/reg-event-fx
- ::subscribe
- [(re-frame/inject-cofx :get-signup-date)]
-
- (fn [{:keys [db signup-date]} [_ email]]
-  ;;  (.log js/console "::events/subscribe" signup-date ">>" email)
-   {:http-xhrio {:method :post
-                 :uri "/subscribe"
-                 :response-format (ajax/json-response-format {:keywords? true})
-                 :format (ajax/url-request-format)
-                 :params {:email email :signup-date signup-date}
-                 :on-success [:gabby-subscribe-on-response-success]
-                 :on-failure [:gabby-subscribe-on-response-failure]}
-    :db (-> db
-            (assoc :subscribe-loading? true)
-            (assoc :user-email ""))}))
-
-(re-frame/reg-cofx
- :get-signup-date
- (fn [cofx]
-   (let [p (clj->js {:timeZoneName "longOffset"})
-         d (-> (js/Date.)
-               (.toLocaleString "sv" p))
-         tz (.-timeZone (.resolvedOptions (.DateTimeFormat js/Intl)))]
-     (assoc cofx :signup-date (str d " [" tz "]")))))
-
-
 (re-frame/reg-event-fx
  ::show-more-attributes
  (fn [{db :db} [_ count]]
    {:db (-> db
             (assoc :visible-attributes (+ 3 count)))}))
 
-
-(re-frame/reg-event-db
- ::toggle-expanded-review-text
- (fn [db [_ review-record]]
-  ;;  (.log js/console "::toggle-expanded-review-text" db ">>" review-record)
-  ;;  (.log js/console "::toggle" (:data-get-reviews db) ">>" (:reviewerID review-record) ">>>" (index-of (:data-get-reviews db) review-record))
-   (assoc-in db [:data-get-reviews (index-of (:data-get-reviews db) review-record)] (assoc review-record :expanded true))))
-
 (re-frame/reg-event-db
  ::like
  (fn [db [_ param]]
-   (assoc-in db [:data-get-products (index-of (:data-get-products db) param)] (merge param {:liked true :disliked false}))
+   (assoc-in db [:data-get-products :top10 (index-of (-> db (:data-get-products) (:top10)) param)] (merge param {:liked true :disliked false}))
    ))
 
 (re-frame/reg-event-db
  ::dislike
  (fn [db [_ param]]
-   (assoc-in db [:data-get-products (index-of (:data-get-products db) param)] (merge param {:disliked true :liked false}))
+   (assoc-in db [:data-get-products :top10 (index-of (-> db (:data-get-products) (:top10)) param)] (merge param {:disliked true :liked false}))
    ))
 
 (re-frame/reg-event-fx

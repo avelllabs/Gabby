@@ -58,20 +58,20 @@
   (-> (js/fetch
        "https://assets.mailerlite.com/jsonp/186743/forms/YnqWxP?callback=ml.fn.renderEmbeddedForm"
        #js
-        {:headers
-         #js
-          {:accept "*/*",
-           :accept-language "en-US,en;q=0.9",
-           :cache-control "no-cache",
-           :pragma "no-cache",
-           :sec-fetch-dest "script",
-           :sec-fetch-mode "no-cors",
-           :sec-fetch-site "cross-site"},
-         :referrerPolicy "strict-origin-when-cross-origin",
-         :body nil,
-         :method "GET",
-         :mode "cors",
-         :credentials "omit"})
+       {:headers
+        #js
+        {:accept "*/*",
+         :accept-language "en-US,en;q=0.9",
+         :cache-control "no-cache",
+         :pragma "no-cache",
+         :sec-fetch-dest "script",
+         :sec-fetch-mode "no-cors",
+         :sec-fetch-site "cross-site"},
+        :referrerPolicy "strict-origin-when-cross-origin",
+        :body nil,
+        :method "GET",
+        :mode "cors",
+        :credentials "omit"})
       (.then (fn [res]
                (.text res)))
       (.then (fn [res]
@@ -86,26 +86,17 @@
   (reagent/create-class
    {:component-did-mount
     (fn []
-      ;; (println "I mounted")
-      ;; ml.fn.renderEmbeddedForm
-      ;; (let [ml "ml"
-      ;;       mlfn "fn"
-      ;;       mlRenderForm "renderEmbeddedForm"
-      ;;       renderForm (aget js/window ml mlfn mlRenderForm)
-      ;;       params #js {:yo "1"}]
-      ;;   (js/console.log "jk log fn" (renderForm params)))
       (.setTimeout js/window (fn []
                                (let [ml-form (.querySelectorAll js/document ".ml-embedded")]
                                  (when (empty? (aget ml-form 0 "innerHTML")) (fetch-render-ml-form))))))
 
-       ;; ... other methods go here
-       ;; see https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle
-       ;; for a complete list
+    ;; ... other methods go here
+    ;; see https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle
+    ;; for a complete list
 
-       ;; name your component for inclusion in error messages
+    ;; name your component for inclusion in error messages
     :display-name "mailerlite-embedded-form"
 
-       ;; note the keyword for this method
     :reagent-render
     (fn []
       [:div {:class "ml-embedded"
@@ -266,16 +257,6 @@
            [:div.col.mx-auto
             [:div.more_categories_label "We will be adding more product categories after this experiment"]]]
           [:div.product-category-list-container
-          ;;  (if (true? categories-loading?)
-          ;;    [:div.row..product-category-list.product-category-list--loading
-          ;;     (for [item (range 4)]
-          ;;       ^{:key item}
-          ;;       [:div.product-category-container.col-6.col-sm-6.col-md-6.col-lg-3
-          ;;        [:div.product_category
-          ;;         [:div.row.justify-content-center.align-self-center
-          ;;          [:div.shimmer.shimmer--img]]
-          ;;         [:div.row.justify-content-center.align-self-center
-          ;;          [:div.product_category_label.shimmer.shimmer--label]]]])]
            [:div.row.product-category-list
             {:class (if (true? categories-loading?) "product-category-list--loading" "")}
             (for [product-item (if (true? categories-loading?) (range 4) product-categories)]
@@ -319,10 +300,10 @@
             product-attributes-stat "89%"] ;; TODO refer dynamically
         (if (and (nil? (js->clj loading?)) (empty? product-attributes))
           (re-frame/dispatch [::events/navigate :home])
-              ;; else
+          ;; else
           [:div.container.product-flow
            [common-header active-panel product-label]
-               ;; [:h3 (str "screen-width: " @(re-frame/subscribe [::bp/screen-width]))]
+           ;; [:h3 (str "screen-width: " @(re-frame/subscribe [::bp/screen-width]))]
            [:div#page2
             [:div.row.product-flow--step-heading
              [:div.col-sm
@@ -370,7 +351,7 @@
              (when (< visible-product-attributes-count product-attributes-count)
                [:button.col-mx-auto.show_more_attributes
                 {:on-click #(re-frame/dispatch [::events/show-more-attributes visible-product-attributes-count])}
-                "Show more"])] ;; TODO logic show more
+                "Show more"])]
             [:div.row.align-items-center.justify-content-center.product-attributes--continue-btn
              [:button.btn.btn_step2Continue
               {:type "button"
@@ -416,17 +397,18 @@
       {:role "progressbar"
        :style {:width (calc-percentage negative-sentiment-count)}}]]))
 
+;; TODO cancel apis when closing the modal, if it did not return
 (defn product-reviews-modal
   "description..."
-  [product num-reviews selected-products]
+  [product]
   (let [show? (reagent/atom false)
         freeze-body #(set! (-> js/document
-                              (.-body)
-                              (.-style)
-                              (.-overflow)) "hidden")
+                               (.-body)
+                               (.-style)
+                               (.-overflow)) "hidden")
         reset-body-style #(set! (-> js/document
-                                   (.-body)
-                                   (.-style)) "")]
+                                    (.-body)
+                                    (.-style)) "")]
     (fn []
       (let [_reviews @(re-frame/subscribe [::subs/product-reviews])
             reviews-filter-context @(re-frame/subscribe [::subs/reviews-filter-context])
@@ -443,7 +425,7 @@
                                   (reset! show? true)
                                   (re-frame/dispatch [::events/get-reviews product])
                                   (freeze-body))}
-                     "See " num-reviews " reviews"]
+                     "See " (:total_reviews_in_context product) " reviews"]
                     (when @show?
                       [modal-panel :src (at)
                        :backdrop-on-click (fn []
@@ -451,7 +433,7 @@
                                             (re-frame/dispatch [::events/data-remove-reviews])
                                             (reset-body-style))
                        :parts {:child-container {:class "product-reviews-modal-container"}}
-                       :child [:div.__modal-content
+                       :child [:div.product-reviews-modal--modal-content
                                [:div.modal-header.product-reviews-modal-header
                                 [:h5.modal-title (:title product)]
                                 [:button.close
@@ -463,7 +445,7 @@
                                               (reset-body-style))}
                                  [:img {:src "/images/close_icon.svg"}]]]
                                [:p.product-review-modal--sub-header.d-sm-block.d-block.d-md-none.d-lg-none.d-none
-                                "Showing top 10 reviews of 2,648 Review"]
+                                "Showing top " (:total_reviews_in_context product) " reviews of " (:num_reviews product) " Reviews"]
                                [:div.product-review-modal--attributes-list
                                 [:div {:class "btn-group-toggle"}
                                  [:label.btn.modal_attribute_tag
@@ -500,18 +482,18 @@
                                 (when (false? _reviews-loading)
                                   (doall
                                    [:div.row.mt-3
-                                     [:div.col-6
-                                      [:button.reviews-modal--filter-pill-btn
-                                       {:on-click #(re-frame/dispatch [::events/toggle-sentiment-filter-context :positive])
-                                        :class (if (true? (:positive sentiment-filter-context)) "active" "")}
-                                       [:b.-text-green "Positive"]
-                                       [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "positive" :context reviews}])]]]
-                                     [:div.col-6
-                                      [:button.reviews-modal--filter-pill-btn.float-right
-                                       {:on-click #(re-frame/dispatch [::events/toggle-sentiment-filter-context :negative])
-                                        :class (if (true? (:negative sentiment-filter-context)) "active" "")}
-                                       [:b.-text-red "Negative"]
-                                       [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "negative" :context reviews}])]]]]))]
+                                    [:div.col-6
+                                     [:button.reviews-modal--filter-pill-btn
+                                      {:on-click #(re-frame/dispatch [::events/toggle-sentiment-filter-context :positive])
+                                       :class (if (true? (:positive sentiment-filter-context)) "active" "")}
+                                      [:b.-text-green "Positive"]
+                                      [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "positive" :context reviews}])]]]
+                                    [:div.col-6
+                                     [:button.reviews-modal--filter-pill-btn.float-right
+                                      {:on-click #(re-frame/dispatch [::events/toggle-sentiment-filter-context :negative])
+                                       :class (if (true? (:negative sentiment-filter-context)) "active" "")}
+                                      [:b.-text-red "Negative"]
+                                      [:span " " @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "negative" :context reviews}])]]]]))]
                                [:div.__modal-body
 
                                 (when (true? _reviews-loading)
@@ -542,9 +524,15 @@
       (> score-rounded 85) "text--matching_score_high"
       :else "text--matching_score_low")))
 
+(defn product-score-fn [score] (.round js/Math (* 100 score)))
+
 (defn product-matching-score-modal
   "description..."
-  [product product-score]
+  ;; good_battery_life_pos_pbry  / good_battery_life_num_reviews_pbry -➝ green bar
+  ;; good_battery_life_neg_pbry  / good_battery_life_num_reviews_pbry -➝ red bar
+  ;; good_battery_life_num_reviews  -➝ Number above the bar.. remove % sign
+  ;; if 0 , then remove bar and grey out attributes texts (70% opacity)
+  [product]
   (let [show? (reagent/atom false)
         reviews-loading? @(re-frame/subscribe [::subs/reviews-loading?])
         freeze-body #(set! (-> js/document
@@ -559,36 +547,42 @@
                             (-> ((keyword (str attribute-name "_pbry")) product)
                                 (js/Math.round)
                                 (* 100)))
-        parse-score-level-positive (fn [attribute-name]
-                            (-> ((keyword (str attribute-name "_pos")) product)
-                                (js/Math.round)
-                                (* 100)
-                                (str "%")))
-        parse-score-level-negative (fn [attribute-name]
-                            (-> ((keyword (str attribute-name "_neg")) product)
-                                (js/Math.round)
-                                (* 100)
-                                (str "%")))
+        parse-score-level-positive (fn [item]
+                                     (let [num-reviews (js/Math.round (:num_reviews_pbry item))
+                                           pos-reviews (js/Math.round (:pos_pbry item))]
+                                       (cond
+                                         (zero? num-reviews) 0 ;; don't display NaN
+                                         :else (-> pos-reviews
+                                                   (/ num-reviews)))))
+        parse-score-level-negative (fn [item]
+                                     (let [num-reviews (js/Math.round (:num_reviews_pbry item))
+                                           neg-reviews (js/Math.round (:neg_pbry item))]
+                                       (cond
+                                         (zero? num-reviews) 0 ;; don't display NaN
+                                         :else (-> neg-reviews
+                                                   (/ num-reviews)))))
         product-score (fn [score] (.round js/Math (* 100 score)))]
-    (js/console.log "views/product-matching-score-modal" product-score ((keyword "reasonable price_neg_pbry") product) selected-attributes)
     (fn []
       [v-box :src (at)
        :children [[:a.matching_score_header
                    {:on-click (fn []
-                      (reset! show? true)
-                      (re-frame/dispatch [::events/get-reviews product]))}
+                                (reset! show? true)
+                                (freeze-body)
+                                (re-frame/dispatch [::events/get-reviews product]))}
                    "Matching score"
                    [:img
                     {:src "/images/info.svg"}]
                    [:span.float-right.product-score-mobile
                     {:class (product-score-class (:score product))}
-                    product-score
+                    (product-score-fn (:score product))
                     "%"]]
                   (when @show?
                     [modal-panel :src (at)
-                     :backdrop-on-click #(reset! show? false)
+                     :backdrop-on-click (fn []
+                                          (reset! show? false)
+                                          (reset-body-style))
                      :parts {:child-container {:class "product-matching-score-modal-container"}}
-                     :child [:div.modal-content
+                     :child [:div.product-matching-score-modal--modal-content
                              [:div.modal-header
                               [:h5#score_modal_title.matching_score_modal_title.w-100
                                "Matching Score"]
@@ -616,221 +610,191 @@
                              [:div.row.matching_score_modal_body_attributescores
                               [:div.row
                                {:style {:margin-right "0.5rem"}}
-                               (for [item selected-attributes]
-                                 ^{:key item}
+                               (for [item (:attributes product)]
+                                 ^{:key (:name item)}
                                  [:section.col-6
+                                  {:class (if (not (zero? (js/Math.round (:num_reviews item)))) "" "-off-focus")}
                                   [:div.row
                                    [:div.col-12.justify-content-between.product-matching-score-modal--attribute-list-heading
-                                            [:div.product_matchingscore_modal_attribute_label item]
-                                            [:div.product_matchingscore_modal_attribute_value (parse-score-level item) " mentions"]]
+                                    [:div.product_matchingscore_modal_attribute_label (:name item)]
+                                    [:div.product_matchingscore_modal_attribute_value (:num_reviews item) " mentions"]]
                                    [:div.col-12.product-matching-score-modal--sentiment-labels
-                                    [:div.product-matching-score-modal--sentiment-labels-positive.-tag-positive.float-left "Positive "
+                                    [:div.product-matching-score-modal--sentiment-labels.-tag-positive.float-left "Positive "
                                      [:b (parse-score-level-positive item)]]
-                                    [:div.product-matching-score-modal--sentiment-labels-negative.-tag-negative.float-right "Negative "
+                                    [:div.product-matching-score-modal--sentiment-labels.-tag-negative.float-right "Negative "
                                      [:b (parse-score-level-negative item)]]]
-                                   [:div.progress.product-matching-score-modal--sentiment-bar
-                                    [:div.progress-bar.-progress-positive
-                                     {:style {:width (parse-score-level-positive item)}}]
-                                    [:div.progress-bar.-progress-negative
-                                     {:style {:width (parse-score-level-negative item)}}]]]])
-                               ;; [:div.row.justify-content-between
-                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               ;; [:div.row.justify-content-between
-                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               ;; [:div.row.justify-content-between
-                               ;;  [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                               ;;  [:div.product_matchingscore_modal_attribute_value "92%"]]
-                               ]
-                              ;; [:div.col
-                              ;;  {:style {:margin-right "0.5rem"}}
-                              ;;  [:div.row.justify-content-between
-                              ;;   [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                              ;;   [:div.product_matchingscore_modal_attribute_value "92%"]]
-                              ;;  [:div.row.justify-content-between
-                              ;;   [:div.product_matchingscore_modal_attribute_label "Attributes"]
-                              ;;   [:div.product_matchingscore_modal_attribute_value "92%"]]]
-                              ]]])]])))
+                                   (when (not (zero? (js/Math.round (:num_reviews item))))
+                                     [:div.progress.product-matching-score-modal--sentiment-bar
+                                      [:div.progress-bar.-progress-positive
+                                       {:style {:width (str (* 100 (parse-score-level-positive item)) "%")}}]
+                                      [:div.progress-bar.-progress-negative
+                                       {:style {:width (str (* 100 (parse-score-level-negative item)) "%")}}]])]])]]]])]])))
 
 (defn product-reviews-panel []
   (reagent/create-class
-  {:component-did-mount
-   (fn []
-     (.capture js/window.posthog "$pageview")
-     (let [el (.createElement js/document "script")]
-       (.setAttribute el "src" "//embed.typeform.com/next/embed.js")
-       (.setTimeout js/window #(.appendChild (.querySelector js/document ".feedback_card_ctas") el)) ;; TODO: put check if script is already added before doing appendChild
-       ))
-   :reagent-render
-   (fn []
-     (let [product-list @(re-frame/subscribe [::subs/product-list])
-           products-loading? @(re-frame/subscribe [::subs/products-loading?])
-           product-score (fn [score] (.round js/Math (* 100 score)))
-           product-score-color (fn [score]
-                                 (let [score-rounded (->> score (* 100) (Math/round))]
-                                   (cond
-                                     (and (> score-rounded 50) (< score-rounded 85)) "matching_score_med"
-                                     (> score-rounded 85) "matching_score_high"
-                                     :else "matching_score_low")))
-           active-panel @(re-frame/subscribe [::subs/get-active-panel])
-           product-search-result-count (.floor js/Math (+ 3000 (* (+ 1 (- 7000 3000)) (.random js/Math))))
-           product-label @(re-frame/subscribe [::subs/product-category])]
+   {:component-did-mount
+    (fn []
+      ;; Posthog
+      (.capture js/window.posthog "$pageview")
 
-       ;; ON LOAD: check if both products-loading? and product-list are null, then redirect to :home page
-       (if (and (nil? (js->clj products-loading?)) (nil? (js->clj product-list)))
-         (re-frame/dispatch [::events/navigate :home])
-         ;; else
-         [:div.container.product-flow
-          [common-header active-panel product-label]
-          [:div#page4
-           [:div.row
-            {:style {:padding-top "1.5rem"}}
-            [:div.col.mx-auto
-             [:div#step_instruction
-              "Showing 10 best matched products"]]]
-           [:div.row.align-items-center.justify-content-center
-            {:style {:padding-top "1.5rem"}}
-            [:div#step4_product_stats
-             "Scoured through "
-             (if (not products-loading?)
-               [:span#matchedProducts_count.purple1
-                product-search-result-count " products"]
-                  ;; else
-               [:span.spinner-border.spinner-border-sm
-                {:role "status"}
-                [:span.sr-only "Loading..."]])
-             " based on what best mattered to you"]]
-           [:div.feedback_card
-            [:div.row.align-items-center
-             [:div.col-md-8.col-xs-12
-              [:div.feedback_card_text
-               "Done! Thank you for interacting with Gabby :)"
-               [:br]
-               [:b "We would really appreciate your feedback that would take you only seconds"]]]
+      ;; Typeform
+      (let [el (.createElement js/document "script")]
+        (.setAttribute el "src" "//embed.typeform.com/next/embed.js")
+        (.setTimeout js/window #(.appendChild (.querySelector js/document ".feedback_card_ctas") el)) ;; TODO: put check if script is already added before doing appendChild
+        ))
+    :reagent-render
+    (fn []
+      (let [product-list @(re-frame/subscribe [::subs/product-list])
+            products-loading? @(re-frame/subscribe [::subs/products-loading?])
+            product-score (fn [score] (.round js/Math (* 100 score)))
+            product-score-color (fn [score]
+                                  (let [score-rounded (->> score (* 100) (Math/round))]
+                                    (cond
+                                      (and (> score-rounded 50) (< score-rounded 85)) "matching_score_med"
+                                      (> score-rounded 85) "matching_score_high"
+                                      :else "matching_score_low")))
+            active-panel @(re-frame/subscribe [::subs/get-active-panel])
+            product-search-result-count @(re-frame/subscribe [::subs/product-search-results-count])
+            product-label @(re-frame/subscribe [::subs/product-category])]
 
-             [:div.feedback_card_ctas.col-md-4.col-xs-12
-              [:button.btn.btn_feedback
-               {:data-tf-popup "XCFwhQp7"
-                :data-tf-hide-headers ""
-                :data-tf-iframe-props "title=Join Gabby - Exit Feedback Form"
-                :data-tf-medium "snippet"}
-               "Provide Feedback"]]]]
-           (when (true? products-loading?)
-             [:div#loading_shimmer_product_list ;; TODO integrate processing indicator to actual card
-              [:div.product_card
-               [:div.row
-                [:div.col-3
-                 [:div.shimmer
-                  {:style {:height "100%"}}]]
-                [:div.col-7
-                 [:div.shimmer.shimmer_small_para
-                  {:style {:margin-bottom "1rem"}}]
-                 [:div.row
-                  [:div.col-5
-                   [:div.shimmer.shimmer_small_para]]
-                  [:div.col-7
-                   [:div.shimmer.shimmer_small_para
-                    {:style {:text-align "right"
-                             :width "70%"
-                             :float "right"}}]]]
-                 [:div.shimmer.shimmer_large_para
-                  {:style {:margin-top "1rem"}}]]
-                [:div.col-2
-                 {:style {:padding-left "0"}}
-                 [:div.shimmer.shimmer_small_para]
-                 [:div.shimmer
-                  {:style {:height "60%"
-                           :margin-top "1rem"}}]]]]])
-          ;; ============
-          ;; PRODUCT LIST
-          ;; ============
-           (when (not products-loading?)
-             [:div#product_list
-              (doall (for [product product-list]
-                       ^{:key product}
-                       [:div.product_card
-                        [:div.product_score_mobile
-                         [product-matching-score-modal
-                          product
-                          (product-score (:score product))]]
-                        [:div.row
-                         [:div.col-md-3.col-4
-                          [:div.product_image
-                           [:img.img-fluid
-                            {:style {:max-height "250px"}
-                             :src (:imageURLHighRes product)}]]]
-                         [:div.col-md-7.col-8
-                          [:div.product_name
-                           {:data-toggle "modal"
-                            :data-target "#product_review_modal"
-                            :data-asin (:asin product)
-                            :data-nreviews (:num_reviews product)} (:title product)]
-                          [:div.row
-                           [:div.col-lg-4.col-xs-12
-                        ;; [:div.num_reviews
-                        ;;  {:data-toggle "modal"
-                        ;;   :data-target "#product_review_modal"
-                        ;;   :data-asin (:asin product)}]
-                            [product-reviews-modal
-                             product
-                             (:total product)
-                             @(re-frame/subscribe [::subs/reviews-filter-context])]]
-                           [:div.col-lg-8.col-xs-12
-                            [:div.product_link
-                             [:a
-                              {:href (str "https://www.amazon.com/dp/" (:asin product))
-                               :target "_blank"
-                               :rel "noopener noreferrer"} "See product on Amazon"]]]]
-                          [:div.row.align-items-center.product_card_helpful
-                           [:div.col-lg-7.col-sm-6
-                            "Was this recommendation helpful"]
-                           [:div.col-lg-4.col-sm-6
-                            [:button.btn.thumbs_btn.thumbs_up.__thumbs_up_active
-                             {:style {:margin-right "0.5rem"}
-                              :class (if (true? (:liked product)) "thumbs_up_active" "thumbs_up_inactive")
-                              :on-click #(re-frame/dispatch [::events/like product])}]
-                            [:button.btn.thumbs_btn.thumbs_down.__thumbs_down_inactive
-                             {:class (if (true? (:disliked product)) "thumbs_down_active" "thumbs_down_inactive")
-                              :on-click #(re-frame/dispatch [::events/dislike product])}
-                             ]]]]
-                         [:div.col-md-2.product_score
-                          {:style {:padding-left "0"}}
-                     ;; Matching score modal
-                    ;;  [:div.matching_score_header
-                    ;;   "Matching score"
-                    ;;   [:img
-                    ;;    {:style {:width "15px"
-                    ;;             :margin-left "0.25rem"
-                    ;;             :padding-bottom "3px"
-                    ;;             :cursor "pointer"}
-                    ;;     :src "images/info.svg"
-                    ;;     :data-toggle "modal"
-                    ;;     :data-target "#product_matchingscore_modal"
-                    ;;     :data-matchingscore "1"
-                    ;;     :data-matchinglevel "high"
-                    ;;     :data-selectedattributes ""
-                    ;;     :data-attributescores ""}]]
+        ;; ON LOAD: check if both products-loading? and product-list are null, then redirect to :home page
+        (if (and (nil? (js->clj products-loading?)) (nil? (js->clj product-list)))
+          (re-frame/dispatch [::events/navigate :home])
+          ;; else
+          [:div.container.product-flow
+           [common-header active-panel product-label]
+           [:div#page4
+            [:div.row
+             {:style {:padding-top "1.5rem"}}
+             [:div.col.mx-auto
+              [:div#step_instruction
+               "Showing 10 best matched products"]]]
+            [:div.row.align-items-center.justify-content-center
+             {:style {:padding-top "1.5rem"}}
+             [:div#step4_product_stats
+              "Scoured through "
+              (if (not products-loading?)
+                [:span#matchedProducts_count.purple1
+                 product-search-result-count " products"]
+                ;; else
+                [:span.spinner-border.spinner-border-sm
+                 {:role "status"}
+                 [:span.sr-only "Loading..."]])
+              " based on what best mattered to you"]]
+            [:div.feedback_card
+             [:div.row.align-items-center
+              [:div.col-md-8.col-xs-12
+               [:div.feedback_card_text
+                "Done! Thank you for interacting with Gabby :)"
+                [:br]
+                [:b "We would really appreciate your feedback that would take you only seconds"]]]
+
+              [:div.feedback_card_ctas.col-md-4.col-xs-12
+               [:button.btn.btn_feedback
+                {:data-tf-popup "XCFwhQp7"
+                 :data-tf-hide-headers ""
+                 :data-tf-iframe-props "title=Join Gabby - Exit Feedback Form"
+                 :data-tf-medium "snippet"}
+                "Provide Feedback"]]]]
+            (when (true? products-loading?)
+              [:div#loading_shimmer_product_list ;; TODO integrate processing indicator to actual card
+               [:div.product_card
+                [:div.row
+                 [:div.col-3
+                  [:div.shimmer
+                   {:style {:height "100%"}}]]
+                 [:div.col-7
+                  [:div.shimmer.shimmer_small_para
+                   {:style {:margin-bottom "1rem"}}]
+                  [:div.row
+                   [:div.col-5
+                    [:div.shimmer.shimmer_small_para]]
+                   [:div.col-7
+                    [:div.shimmer.shimmer_small_para
+                     {:style {:text-align "right"
+                              :width "70%"
+                              :float "right"}}]]]
+                  [:div.shimmer.shimmer_large_para
+                   {:style {:margin-top "1rem"}}]]
+                 [:div.col-2
+                  {:style {:padding-left "0"}}
+                  [:div.shimmer.shimmer_small_para]
+                  [:div.shimmer
+                   {:style {:height "60%"
+                            :margin-top "1rem"}}]]]]])
+            ;; ============
+            ;; PRODUCT LIST
+            ;; ============
+            (when (not products-loading?)
+              [:div#product_list
+               (doall (for [product product-list]
+                        ^{:key product}
+                        [:div.product_card
+                         [:div.product_score_mobile
                           [product-matching-score-modal
                            product
-                           (:num_reviews product)
-                           @(re-frame/subscribe [::subs/selected-products])]
-                          [:div.matching_score
-                           [:div.matching_score_circle
-                            [:div {:class (product-score-color (:score product))}
-                             [:div.matching_score_num
-                              (product-score (:score product)) "%"]]]]]]
-                        [:div.row.align-items-center.product_card_helpful_mobile
-                         [:div.col-6.text-right
-                          "Was this helpful"]
-                         [:div.col-6
-                          [:button.btn.thumbs_btn.thumbs_up.thumbs_up_inactive
-                           {:style {:margin-right "0.5rem"}
-                            :class (if (true? (:liked product)) "thumbs_up_active" "thumbs_up_inactive")
-                            :on-click #(re-frame/dispatch [::events/like product])}]
-                          [:button.btn.thumbs_btn.thumbs_down.thumbs_down_inactive
-                           {:class (if (true? (:disliked product)) "thumbs_down_active" "thumbs_down_inactive")
-                            :on-click #(re-frame/dispatch [::events/dislike product])}]]]]))])]])))}))
+                           (product-score (:score product))]]
+                         [:div.row
+                          [:div.col-md-3.col-4
+                           [:div.product_image
+                            [:img.img-fluid
+                             {:style {:max-height "250px"}
+                              :src (:imageURLHighRes product)}]]]
+                          [:div.col-md-7.col-8
+                           [:div.product_name
+                            {:data-toggle "modal"
+                             :data-target "#product_review_modal"
+                             :data-asin (:asin product)
+                             :data-nreviews (:num_reviews product)} (:title product)]
+                           [:div.row
+                            [:div.col-lg-4.col-xs-12
+                             ;; [:div.num_reviews
+                             ;;  {:data-toggle "modal"
+                             ;;   :data-target "#product_review_modal"
+                             ;;   :data-asin (:asin product)}]
+                             [product-reviews-modal
+                              product
+                              (:num_reviews product)
+                              @(re-frame/subscribe [::subs/reviews-filter-context])]]
+                            [:div.col-lg-8.col-xs-12
+                             [:div.product_link
+                              [:a
+                               {:href (str "https://www.amazon.com/dp/" (:asin product))
+                                :target "_blank"
+                                :rel "noopener noreferrer"} "See product on Amazon"]]]]
+                           [:div.row.align-items-center.product_card_helpful
+                            [:div.col-lg-7.col-sm-6
+                             "Was this recommendation helpful"]
+                            [:div.col-lg-4.col-sm-6
+                             [:button.btn.thumbs_btn.thumbs_up.__thumbs_up_active
+                              {:style {:margin-right "0.5rem"}
+                               :class (if (true? (:liked product)) "thumbs_up_active" "thumbs_up_inactive")
+                               :on-click #(re-frame/dispatch [::events/like product])}]
+                             [:button.btn.thumbs_btn.thumbs_down.__thumbs_down_inactive
+                              {:class (if (true? (:disliked product)) "thumbs_down_active" "thumbs_down_inactive")
+                               :on-click #(re-frame/dispatch [::events/dislike product])}
+                              ]]]]
+                          [:div.col-md-2.product_score
+                           {:style {:padding-left "0"}}
+                           [product-matching-score-modal
+                            product
+                            (:num_reviews product)]
+                           [:div.matching_score
+                            [:div.matching_score_circle
+                             [:div {:class (product-score-color (:score product))}
+                              [:div.matching_score_num
+                               (product-score (:score product)) "%"]]]]]]
+                         [:div.row.align-items-center.product_card_helpful_mobile
+                          [:div.col-6.text-right
+                           "Was this helpful"]
+                          [:div.col-6
+                           [:button.btn.thumbs_btn.thumbs_up.thumbs_up_inactive
+                            {:style {:margin-right "0.5rem"}
+                             :class (if (true? (:liked product)) "thumbs_up_active" "thumbs_up_inactive")
+                             :on-click #(re-frame/dispatch [::events/like product])}]
+                           [:button.btn.thumbs_btn.thumbs_down.thumbs_down_inactive
+                            {:class (if (true? (:disliked product)) "thumbs_down_active" "thumbs_down_inactive")
+                             :on-click #(re-frame/dispatch [::events/dislike product])}]]]]))])]])))}))
 
 (defmethod routes/panels :product-reviews-panel [] [product-reviews-panel])
 

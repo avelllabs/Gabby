@@ -87,7 +87,16 @@
  ::product-list
  (fn [db]
   ;;  (.log js/console ":product-list" db)
-   (:data-get-products db)))
+   (-> db
+       (:data-get-products)
+       (:top10))))
+
+(re-frame/reg-sub
+ ::product-search-results-count
+ (fn [db]
+   (-> db
+       (:data-get-products)
+       (:num_prods))))
 
 (re-frame/reg-sub
  ::active-panel
@@ -114,12 +123,10 @@
  (fn [db]
    (let [filter-context (->> (mapv (fn [item] (when (true? (last item)) [(first item)])) (:reviews-filter-context db))
                              (filterv some?))
-         reviews (:data-reviews-grouped db)
+         reviews (:data-reviews-grouped db) ;; refactor rename
          all-reviews-grouped-by-sentiment (group-by :sentiment (:data-get-reviews db))
          sentiment-context (:reviews-sentiment-filter-context db)
          reviews-grouped-by-sentiment (group-by :sentiment (mapcat reviews filter-context))]
-    ;;  (js/console.log "::subs/filtered-reviews" "empty?" (empty? filter-context) "positive:true?" (true? (:positive sentiment-context)) "negative:false?" (false? (:negative sentiment-context)) ">" sentiment-context ">>" all-reviews-grouped-by-sentiment ">>>" (mapcat all-reviews-grouped-by-sentiment ["negative"]))
-    ;;  (:data-reviews-filtered db)
      (cond
        (and (empty? filter-context) (true? (:positive sentiment-context)) (false? (:negative sentiment-context))) (mapcat all-reviews-grouped-by-sentiment ["positive"])
        (and (empty? filter-context) (false? (:positive sentiment-context)) (true? (:negative sentiment-context))) (mapcat all-reviews-grouped-by-sentiment ["negative"])
@@ -131,7 +138,6 @@
 (re-frame/reg-sub
  ::reviews-filter-context
  (fn [db]
-  ;;  (js/console.log "::subs/reviews-filter-context" (:reviews-filter-context db))
    (:reviews-filter-context db)))
 
 (re-frame/reg-sub

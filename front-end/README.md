@@ -119,6 +119,31 @@ the enhancement request in their bug tracker:
 
 ## Development
 
+### Flask Setup
+
+#### Install dependencies
+``` bash
+pip download -r requirements.txt
+```
+Note: When you encounter a missing module error try to install one-by-one and run `python server.py` each time after one module installed successfully, until you see:
+
+``` bash
+WARNING: db_profile set to digitalocean_remote in db_config.ini!
+ * Serving Flask app 'server'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+```
+
+#### Running Backend Server (localhost)
+
+``` bash
+cd app
+. venv/bin/activate
+python server.py
+```
+
 ### Running the App
 
 Start a temporary local web server, build the app with the `dev` profile, and serve the app,

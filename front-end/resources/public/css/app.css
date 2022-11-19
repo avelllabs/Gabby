@@ -901,6 +901,7 @@ body {
 	border: none;
 }
 
+.product-matching-score-modal-container,
 .product-reviews-modal-container {
 	max-height: 90%;
 	overflow-x: hidden;
@@ -908,12 +909,12 @@ body {
 
 }
 
-.product-reviews-modal-container .modal-content,
-.product-matching-score-modal-container .modal-content {
+.product-reviews-modal-container .product-reviews-modal--modal-content,
+.product-matching-score-modal-container .product-matching-score-modal--modal-content {
 	border: none;
 }
 
-.product-matching-score-modal-container .modal-content .modal-header {
+.product-matching-score-modal-container .modal-header {
 	border-bottom: none;
 }
 .product-reviews-modal-container .modal_review_content {
@@ -1880,4 +1881,18 @@ img.d-block.d-xs-block.d-sm-block {
 .product-matching-score-modal--sentiment-bar {
   height: 4px;
   margin: 0 15px 10px;
+}
+.product-matching-score-modal--sentiment-labels {
+  font-size: 11px;
+  line-height: 21px;
+}
+.-off-focus {
+  opacity: .5;
+  margin-bottom: 1rem;
+}
+.-off-focus .product_matchingscore_modal_attribute_label,
+.-off-focus .product_matchingscore_modal_attribute_value,
+.-off-focus .product-matching-score-modal--sentiment-labels,
+.-off-focus .product-matching-score-modal--sentiment-labels {
+  color: #AAA;
 }
