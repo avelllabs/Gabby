@@ -402,7 +402,7 @@ def get_products_for_attributes_v2(category, attribute_list):
     # positive leaning factors
     for phrase in positive_attributes_counts['phrase'].unique():
         us_phrase = '_'.join(phrase.split()) 
-        prod_attr_prby[f"{phrase}_score_level"] = prod_attr_prby[f"{us_phrase}_pos_pbry"]/prod_attr_prby[f"{us_phrase}_num_reviews_pbry"]
+        prod_attr_prby[f"{us_phrase}_score_level"] = prod_attr_prby[f"{us_phrase}_pos_pbry"]/prod_attr_prby[f"{us_phrase}_num_reviews_pbry"]
         prod_attr_prby = prod_attr_prby.fillna(0.5)
 
 
@@ -436,11 +436,30 @@ def get_products_for_attributes_v2(category, attribute_list):
         '''
     matched_products = pd.read_sql(fetch_matched_products_query, conn)
     recommended_list = matched_products.merge(top10_products).sort_values('score', ascending=False)
+
+    product_data_arr = build_product_response_dict(recommended_list, attribute_list)
     
-    return recommended_list, num_prods
+    return product_data_arr, num_prods
     
     
-    
+def build_product_response_dict(recommended_list, attribute_list):
+    products_data_arr = recommended_list.iloc[:, 0:14].to_dict(orient='records')
+    #products_data_arr = recommended_list[['asin', 'num_reviews']].to_dict(orient='records')
+    tot_df = recommended_list[ [c for c in recommended_list.columns if c.startswith('total') ] + ['score']]
+    tot_data_arr = tot_df.to_dict(orient='records')
+    for i in range(len(products_data_arr)):
+        products_data_arr[i].update(tot_data_arr[i])
+    for att in attribute_list:
+        att_us = f"{'_'.join(att.split())}"
+        att_df = recommended_list[ [c for c in recommended_list.columns if c.startswith(att_us) ] ]
+        att_df = att_df.assign(name=[att] * len(products_data_arr))
+        att_df.columns = [c.replace(f"{att_us}_", '') for c in att_df.columns]
+        att_data_arr = att_df.to_dict(orient='records')
+        for i in range(len(products_data_arr)):
+            if "attributes" not in products_data_arr[i]:
+                products_data_arr[i]["attributes"] = []
+            products_data_arr[i]["attributes"].append(att_data_arr[i])
+    return products_data_arr
     
     
     

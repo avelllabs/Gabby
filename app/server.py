@@ -50,7 +50,8 @@ def get_products():
     products_top10, num_prods = \
         gabby_data.get_products_for_attributes_v2(args['category'], args['attributes'])
     
-    return {'num_prods':num_prods, 'top10': products_top10.to_json(orient='records')}
+    return jsonify({'num_prods':num_prods, 'top10': products_top10})
+    #return {'num_prods':num_prods, 'top10': products_top10.to_json(orient='records')}
     #return products_top10.to_json(orient='records')
 
 
