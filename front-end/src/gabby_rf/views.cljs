@@ -518,11 +518,19 @@
                                             ))])]]])]]))))
 ;; TODO refactor make dry
 (defn product-score-class [score]
-  (let [score-rounded (->> score (* 100) (Math/round))]
+  (let [score-rounded (-> score (* 100) (Math/round))]
     (cond
       (and (> score-rounded 50) (< score-rounded 85)) "text--matching_score_med"
       (> score-rounded 85) "text--matching_score_high"
       :else "text--matching_score_low")))
+
+(defn score-class-levels [score]
+  (let [score-rounded (->> score (Math/round))]
+    (js/console.log "jk debug fn::score-class-levels" score ">>" score-rounded)
+    (cond
+      (and (> score-rounded 50) (< score-rounded 85)) "matching_score_modal_med"
+      (> score-rounded 85) "matching_score_modal_high"
+      :else "matching_score_modal_low")))
 
 (defn product-score-fn [score] (.round js/Math (* 100 score)))
 
@@ -541,7 +549,6 @@
   [product]
   (let [show? (reagent/atom false)
         reviews-loading? @(re-frame/subscribe [::subs/reviews-loading?])
-
         reset-body-style #(set! (-> js/document
                                     (.-body)
                                     (.-style)) "")
@@ -556,18 +563,18 @@
                                        (cond
                                          (zero? num-reviews) 0 ;; don't display NaN
                                          :else (-> pos-reviews
-                                                   (/ num-reviews) 
+                                                   (/ num-reviews)
                                                    (* 100)
-                                                   ))))
+                                                   (js/Math.round)))))
         parse-score-level-negative (fn [item]
                                      (let [num-reviews (:num_reviews_pbry item)
                                            neg-reviews (:neg_pbry item)]
                                        (cond
                                          (zero? num-reviews) 0 ;; don't display NaN
                                          :else (-> neg-reviews
-                                                   (/ num-reviews) 
+                                                   (/ num-reviews)
                                                    (* 100)
-                                                   ))))
+                                                   (js/Math.round)))))
         product-score (fn [score] (.round js/Math (* 100 score)))]
     (fn []
       [v-box :src (at)
@@ -608,7 +615,8 @@
                               [:div.col-3
                                [:div.matching_score
                                 [:div.matching_score_modal--circle-wrapper.float-right
-                                 [:div.matching_score_modal--circle.matching_score_modal_high
+                                 [:div.matching_score_modal--circle._matching_score_modal_low
+                                  {:class (score-class-levels (product-score (:score product)))}
                                   [:div.matching_score_modal_num
                                    (product-score (:score product)) [:span.font-style-base "%"]]]]]]] ;; TODO dynamic ref
                              [:div.matching_score_modal_body
@@ -626,9 +634,9 @@
                                     [:div.product_matchingscore_modal_attribute_value (:num_reviews item) " mentions"]]
                                    [:div.col-12.product-matching-score-modal--sentiment-labels
                                     [:div.product-matching-score-modal--sentiment-labels.-tag-positive.float-left "Positive "
-                                     [:b (parse-score-level-positive item)]]
+                                     [:b (parse-score-level-positive item) "%"]]
                                     [:div.product-matching-score-modal--sentiment-labels.-tag-negative.float-right "Negative "
-                                     [:b (parse-score-level-negative item)]]]
+                                     [:b (parse-score-level-negative item) "%"]]]
                                    (when (not (zero? (js/Math.round (:num_reviews item))))
                                      [:div.progress.product-matching-score-modal--sentiment-bar
                                       [:div.progress-bar.-progress-positive
