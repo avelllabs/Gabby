@@ -551,19 +551,23 @@
                                 (js/Math.round)
                                 (* 100)))
         parse-score-level-positive (fn [item]
-                                     (let [num-reviews (js/Math.round (:num_reviews_pbry item))
-                                           pos-reviews (js/Math.round (:pos_pbry item))]
+                                     (let [num-reviews (:num_reviews_pbry item)
+                                           pos-reviews (:pos_pbry item)]
                                        (cond
                                          (zero? num-reviews) 0 ;; don't display NaN
                                          :else (-> pos-reviews
-                                                   (/ num-reviews)))))
+                                                   (/ num-reviews) 
+                                                   (* 100)
+                                                   ))))
         parse-score-level-negative (fn [item]
-                                     (let [num-reviews (js/Math.round (:num_reviews_pbry item))
-                                           neg-reviews (js/Math.round (:neg_pbry item))]
+                                     (let [num-reviews (:num_reviews_pbry item)
+                                           neg-reviews (:neg_pbry item)]
                                        (cond
                                          (zero? num-reviews) 0 ;; don't display NaN
                                          :else (-> neg-reviews
-                                                   (/ num-reviews)))))
+                                                   (/ num-reviews) 
+                                                   (* 100)
+                                                   ))))
         product-score (fn [score] (.round js/Math (* 100 score)))]
     (fn []
       [v-box :src (at)
