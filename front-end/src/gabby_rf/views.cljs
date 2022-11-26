@@ -223,13 +223,13 @@
 
 (def product-categories-meta-map {:laptop {:img-src "/images/laptop.svg"
                                            :label "Laptop"}
-                                  :monitor {:img-src "/images/monitor.svg"
+                                  :monitor {:img-src "/images/monitor.png"
                                             :label "Monitor"}
                                   :headphone {:img-src "/images/headphone.svg"
                                               :label "Headphone"}
                                   :mouse {:img-src "/images/mouse.svg"
                                           :label "Mouse"}
-                                  :tv {:img-src "/images/monitor.svg"
+                                  :tv {:img-src "/images/tv.svg"
                                        :label "TV"}})
 (defn product-index-panel []
   (reagent/create-class
@@ -526,6 +526,12 @@
 
 (defn product-score-fn [score] (.round js/Math (* 100 score)))
 
+(defn freeze-body []
+  (set! (-> js/document
+            (.-body)
+            (.-style)
+            (.-overflow)) "hidden"))
+
 (defn product-matching-score-modal
   "description..."
   ;; good_battery_life_pos_pbry  / good_battery_life_num_reviews_pbry -➝ green bar
@@ -535,10 +541,7 @@
   [product]
   (let [show? (reagent/atom false)
         reviews-loading? @(re-frame/subscribe [::subs/reviews-loading?])
-        freeze-body #(set! (-> js/document
-                               (.-body)
-                               (.-style)
-                               (.-overflow)) "hidden")
+
         reset-body-style #(set! (-> js/document
                                     (.-body)
                                     (.-style)) "")
@@ -600,19 +603,18 @@
                                "This score represents the product matching based on the attributes that matters to you. Per-attribute matching scores are shown below."]
                               [:div.col-3
                                [:div.matching_score
-                                [:div.matching_score_modal_circle
-                                 [:div.matching_score_modal_high
+                                [:div.matching_score_modal--circle-wrapper.float-right
+                                 [:div.matching_score_modal--circle.matching_score_modal_high
                                   [:div.matching_score_modal_num
-                                   (product-score (:score product)) "%"]]]]]] ;; TODO dynamic ref
+                                   (product-score (:score product)) [:span.font-style-base "%"]]]]]]] ;; TODO dynamic ref
                              [:div.matching_score_modal_body
                               [:div.matching_score_modal_body_heading.my-4
                                "Attributes"]]
                              [:div.row.matching_score_modal_body_attributescores
                               [:div.row
-                               {:style {:margin-right "0.5rem"}}
                                (for [item (:attributes product)]
                                  ^{:key (:name item)}
-                                 [:section.col-6
+                                 [:section.col-md-6.col-xs-12.col-sm-12
                                   {:class (if (not (zero? (js/Math.round (:num_reviews item)))) "" "-off-focus")}
                                   [:div.row
                                    [:div.col-12.justify-content-between.product-matching-score-modal--attribute-list-heading
@@ -668,7 +670,11 @@
              {:style {:padding-top "1.5rem"}}
              [:div.col.mx-auto
               [:div#step_instruction
-               "Showing 10 best matched products"]]]
+               "Showing 10 best matched "
+               [:span.title-case
+                (cond
+                  (= product-label "tv") "TV"
+                  :else product-label)]]]]
             [:div.row.align-items-center.justify-content-center
              {:style {:padding-top "1.5rem"}}
              [:div#step4_product_stats
@@ -783,7 +789,7 @@
                             [:div.matching_score_circle
                              [:div {:class (product-score-color (:score product))}
                               [:div.matching_score_num
-                               (product-score (:score product)) "%"]]]]]]
+                               (product-score (:score product)) [:span.font-style-base "%"]]]]]]]
                          [:div.row.align-items-center.product_card_helpful_mobile
                           [:div.col-6.text-right
                            "Was this helpful"]
