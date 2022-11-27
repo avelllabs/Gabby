@@ -24,7 +24,20 @@
   8290 "target/browser-test"}
 
  :builds
- {:app
+ {:ext
+  {:target :esm
+   :output-dir "dist/ext/js"
+   :runtime :custom
+   :modules
+   {:shared
+    {:entries []}
+    :sw
+    {:init-fn gabby-rf.sw/init-chrome-ext
+     :depends-on #{:shared}}
+    :popup
+    {:init-fn gabby-rf.core/init-chrome-ext
+     :depends-on #{:shared}}}}
+  :app
   {:target     :browser
    :output-dir "resources/public/js/compiled"
    :asset-path "js/compiled"

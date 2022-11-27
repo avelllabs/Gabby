@@ -36,3 +36,7 @@
                             :debounce-ms 166}])
   (dev-setup)
   (mount-root))
+
+(defn init-chrome-ext []
+  (init)
+  (re-frame/dispatch [::events/navigate :product-index]))

@@ -200,6 +200,23 @@ For example, in Vim / Neovim with `fireplace.vim`
 3. See [`user.cljs`](dev/cljs/user.cljs) for symbols that are immediately accessible in the REPL
 without needing to `require`.
 
+### Chrome Extension (target)
+- https://github.com/thheller/shadow-cljs/issues/279
+- https://github.com/thheller/shadow-cljs/issues/1051
+- https://github.com/thheller/chrome-ext-v3
+- https://stackoverflow.com/questions/7507277/detecting-if-code-is-being-run-as-a-chrome-extension
+
+#### Running the app (target chrome extension)
+
+``` bash
+npm run watch-ext
+```
+
+1. Open Chrome Browser
+2. Navigate to chrome://extensions/
+3. Turn on developer mode
+4. Load unpacked -> select folder: dist/ext
+
 ### Running Tests
 
 Build the app with the `prod` profile, start a temporary local web server, launch headless

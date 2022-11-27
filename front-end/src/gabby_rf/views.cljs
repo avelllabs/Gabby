@@ -8,6 +8,15 @@
    [reagent.core :as reagent]
    [clojure.string :as str]))
 
+(defn in-chrome-extension? []
+  (if (and (not (nil? (aget js/window "chrome" "runtime")))
+           (not (nil? (-> js/window
+                          (.-chrome)
+                          (.-runtime)
+                          (.-id)))))
+    true
+    false))
+
 
 (def attributes-list
   [{:label "Decent Price"}
@@ -34,12 +43,17 @@
                       (case panel
                         :product-attributes-panel :product-index
                         :product-reviews-panel [:product-attributes :produit current-product]
-                        :product-index-panel :home))]
+                        :product-index-panel :home))
+        show-back-button? (cond
+                            (and (true? (in-chrome-extension?)) (not (= active-panel :product-index-panel))) true
+                            (false? (in-chrome-extension?)) true
+                            )]
     [:div.row.common-header
      [:div.col
-      [:button.back-button.float-left.mt-2
-       {:on-click #(re-frame/dispatch [::events/navigate (navigate-to active-panel)])}
-       [:img {:src "/images/arrow_back.svg"}]]] ;; TODO add logic to hide and show
+      (when show-back-button?
+        [:button.back-button.float-left.mt-2
+         {:on-click #(re-frame/dispatch [::events/navigate (navigate-to active-panel)])}
+         [:img {:src "/images/arrow_back.svg"}]])] ;; TODO add logic to hide and show
      [:div.col-auto
       [:a#logo
        {:href "https://joingabby.com"
@@ -49,8 +63,7 @@
       (when (not (= active-panel :product-index-panel))
         [:button.btn.btn_restart.float-right
          {:on-click #(re-frame/dispatch [::events/navigate :product-index])}
-         "Restart"])]])
-  )
+         "Restart"])]]))
 
 ;; FIX: for Mailerlite form to re-render when navigating back to landing page
 ;; TODO: more description
@@ -78,7 +91,8 @@
                {:ml-fn (last (str/split (str/join (take 24 (subs res 4))) #"\."))
                 :fn-param (str/join (drop-last 2 (drop 1 (subs res 28))))}))
       (.then (fn [res]
-               ((.ml js/window (:ml-fn res) (.parse js/window.JSON (:fn-param res))))))))
+               ((.ml js/window (:ml-fn res) (.parse js/window.JSON (:fn-param res)))))))
+  )
 
 
 ;; home
@@ -86,9 +100,10 @@
   (reagent/create-class
    {:component-did-mount
     (fn []
-      (.setTimeout js/window (fn []
-                               (let [ml-form (.querySelectorAll js/document ".ml-embedded")]
-                                 (when (empty? (aget ml-form 0 "innerHTML")) (fetch-render-ml-form))))))
+      (when (false? (in-chrome-extension?))
+        (.setTimeout js/window (fn []
+                                 (let [ml-form (.querySelectorAll js/document ".ml-embedded")]
+                                   (when (empty? (aget ml-form 0 "innerHTML")) (fetch-render-ml-form)))))))
 
     ;; ... other methods go here
     ;; see https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle
@@ -209,7 +224,8 @@
          [:div.bottom_section_text
           "This is an experiment from 3 friends that want to get 100 strangers (future friends) to go through it :) If you like hearing from us please add your email and we will make sure to keep you informed :)"]
 
-         [mailerlite-embedded-form]]]
+         (when (false? (in-chrome-extension?))
+           [mailerlite-embedded-form])]]
        [:div.row.align-items-center.justify-content-center.by-line
         [:h4 "Experiment from Toronto from 4 "
          [:span.icon-smiley-glasses "🤓"]
@@ -235,7 +251,9 @@
   (reagent/create-class
    {:component-did-mount
     (fn []
-      (.capture js/window.posthog "$pageview")
+      (when (false? (in-chrome-extension?))
+        (.capture js/window.posthog "$pageview"))
+
       (re-frame/dispatch [::events/get-categories]))
     :reagent-render
     (fn []
@@ -287,7 +305,9 @@
   (reagent/create-class
    {:component-did-mount
     (fn []
-      (.capture js/window.posthog "$pageview"))
+      (when (false? (in-chrome-extension?))
+        (.capture js/window.posthog "$pageview"))
+      )
     :reagent-render
     (fn []
       (let [loading? @(re-frame/subscribe [::subs/loading?])
@@ -648,14 +668,18 @@
   (reagent/create-class
    {:component-did-mount
     (fn []
-      ;; Posthog
-      (.capture js/window.posthog "$pageview")
 
-      ;; Typeform
-      (let [el (.createElement js/document "script")]
-        (.setAttribute el "src" "//embed.typeform.com/next/embed.js")
-        (.setTimeout js/window #(.appendChild (.querySelector js/document ".feedback_card_ctas") el)) ;; TODO: put check if script is already added before doing appendChild
-        ))
+      (when (false? (in-chrome-extension?))
+        ;; Posthog
+        (.capture js/window.posthog "$pageview")
+
+        ;; Typeform
+        (let [el (.createElement js/document "script")]
+          (.setAttribute el "src" "//embed.typeform.com/next/embed.js")
+          (.setTimeout js/window #(.appendChild (.querySelector js/document ".feedback_card_ctas") el)) ;; TODO: put check if script is already added before doing appendChild
+          )
+        )
+      )
     :reagent-render
     (fn []
       (let [product-list @(re-frame/subscribe [::subs/product-list])
