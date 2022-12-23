@@ -8,9 +8,11 @@
    [gabby-rf.views :as views]
    [gabby-rf.config :as config]
    [day8.re-frame.http-fx]
-   [re-com.core]
-   ))
+   [re-com.core]))
 
+(defn get-browser-navigator-vendor [app-el]
+  (let [vendor (aget js/window "navigator" "vendor")]
+    (.setAttribute app-el "data-navigator-vendor" vendor)))
 
 (defn dev-setup []
   (when config/debug?
@@ -19,6 +21,7 @@
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
   (let [root-el (.getElementById js/document "app")]
+    (get-browser-navigator-vendor root-el)
     (rdom/unmount-component-at-node root-el)
     (rdom/render [views/main-panel] root-el)))
 

@@ -8,6 +8,17 @@
    [reagent.core :as reagent]
    [clojure.string :as str]))
 
+(defn in-chrome-extension? []
+  (if (and (not (nil? (aget js/window "chrome")))
+           (not (nil? (aget js/window "chrome" "runtime")))
+           (not (nil? (-> js/window
+                          (.-chrome)
+                          (.-runtime)
+                          (.-id)))))
+    true
+    false))
+
+
 
 (def attributes-list
   [{:label "Decent Price"}
@@ -367,22 +378,29 @@
       [:div.modal_review
        [:div.modal_review_title
         (:reviewTitle review)]
-       [:p.modal-review--text
-        {:class (if (true? @expand?) "--text-expanded" "--text-collapsed")}
-        (:reviewText review)
+       [:article
+        [:p.modal-review--text
+                 {:class (if (true? @expand?) "--text-expanded" "--text-collapsed")}
+                 (:reviewText review)]
         (when (not (true? @expand?))
-          [:a.modal-review--more-text
+          [:a.modal-review-text-cta-toggle.modal-review--more-text
            {:on-click #(reset! expand? true)}
-           "...more"])]
-       [:small (.toLocaleString (js/Date. (:reviewTime review)))]
-       [:b.product-review-modal--filter-tag-sentiment
-        {:class (case (:sentiment review)
-                  "positive" "-tag-positive"
-                  "negative" "-tag-negative"
-                  "")}
-        (case (:sentiment review)
-          "positive" "Positive"
-          "negative" "Negative")]])))
+           [:div.modal-review--more-text-label
+            [:strong [:b.zmdi.zmdi-chevron-down] " more"]]])]
+       (when (true? @expand?)
+         [:a.modal-review-text-cta-toggle.modal-review--less-text
+          {:on-click #(reset! expand? false)}
+          [:strong [:b.zmdi.zmdi-chevron-up] " less"]])
+       [:div
+        [:small (.toLocaleString (js/Date. (:reviewTime review)))]
+        [:b.product-review-modal--filter-tag-sentiment
+         {:class (case (:sentiment review)
+                   "positive" "-tag-positive"
+                   "negative" "-tag-negative"
+                   "")}
+         (case (:sentiment review)
+           "positive" "Positive"
+           "negative" "Negative")]]])))
 
 (defn reviews-sentiment-bar [reviews]
   (let [positive-sentiment-count @(re-frame/subscribe [::subs/count-review-sentiments {:sentiment "positive" :context reviews}])
@@ -608,11 +626,10 @@
                                             (re-frame/dispatch [::events/data-remove-reviews])
                                             (reset-body-style))}
                                [:img {:src "/images/close_icon.svg"}]]]
-                             [:div.row.no-gutters
-                              [:div.col-9.product_matchingscore_modal_subheading
-                               {:style {:padding-left "1.2rem"}}
+                             [:div.row.px-3
+                              [:div.product_matchingscore_modal_subheading
                                "This score represents the product matching based on the attributes that matters to you. Per-attribute matching scores are shown below."]
-                              [:div.col-3
+                              [:div.product_mathingscore_modal_subheading_score
                                [:div.matching_score
                                 [:div.matching_score_modal--circle-wrapper.float-right
                                  [:div.matching_score_modal--circle._matching_score_modal_low
@@ -621,7 +638,7 @@
                                    (product-score (:score product)) [:span.font-style-base "%"]]]]]]] ;; TODO dynamic ref
                              [:div.matching_score_modal_body
                               [:div.matching_score_modal_body_heading.my-4
-                               "Attributes"]]
+                               "Attribute Matches"]]
                              [:div.row.matching_score_modal_body_attributescores
                               [:div.row
                                (for [item (:attributes product)]

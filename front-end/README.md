@@ -119,6 +119,9 @@ the enhancement request in their bug tracker:
 
 ## Development
 
+### Icons
+- https://zavoloklom.github.io/material-design-iconic-font/icons.html
+
 ### Flask Setup
 
 #### Install dependencies

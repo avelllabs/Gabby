@@ -779,9 +779,10 @@ body {
   margin: -5px 0;
 }
 .matching_score_modal--circle {
-  height: 115px;
-  width: 115px;
-  background-size: 185px;
+  height: 125px;
+  width: 125px;
+  background-size: 228px;
+  background-position: 0px 0px;
 }
 .matching_score_modal_high {
   display: inline-block;
@@ -799,17 +800,16 @@ body {
 }
 
 .matching_score_modal_num {
-  height: 115px;
-  width: 115px;
+  height: 120px;
+  width: 125px;
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 700;
   font-size: 29px;
-  line-height: 28px;
+  color: #000;
   text-align: center;
   vertical-align: middle;
   display: table-cell;
-  color: #000;
 }
 
 .product_matchingscore_modal_subheading {
@@ -822,6 +822,12 @@ body {
   letter-spacing: -0.02em;
   color: #000000;
   padding-left: 1rem;
+  width: 80%;
+  padding-right: 10%;
+}
+
+.product_mathingscore_modal_subheading_score {
+  width: 15%
 }
 
 .product_matchingscore_modal_attribute_label {
@@ -909,6 +915,7 @@ body {
 .product-reviews-modal-container {
   overflow-x: hidden;
   overflow-y: auto;
+  height: 100%;
 }
 
 .product-reviews-modal-container .product-reviews-modal--modal-content,
@@ -1192,7 +1199,7 @@ img.d-block.d-xs-block.d-sm-block {
   }
 
   .product-reviews-modal-header .close {
-    padding: 0;
+    padding: 0 1.5rem 0 0;
   }
 
   .product-review-modal--sub-header {
@@ -1208,8 +1215,8 @@ img.d-block.d-xs-block.d-sm-block {
 
   .modal-review--text {
     font-size: 14px;
-    line-height: 18px;
-    letter-spacing: -0.02em;
+    /* line-height: 18px; */
+    /* letter-spacing: -0.02em; */
   }
 
   .modal_review_title {
@@ -1277,6 +1284,11 @@ img.d-block.d-xs-block.d-sm-block {
     line-height: 18px;
     padding: 10px 20px;
   }
+
+  .product_matchingscore_modal_subheading {
+    padding-right: 25%;
+  }
+
 }
 
 @media (max-width: 576px) {
@@ -1519,8 +1531,8 @@ img.d-block.d-xs-block.d-sm-block {
 
   .modal-review--text {
     font-size: 18px;
-    line-height: 30px;
-    letter-spacing: -0.02em;
+    /* line-height: 30px; */
+    /* letter-spacing: -0.02em; */
   }
 
   .modal_review small {
@@ -1541,6 +1553,11 @@ img.d-block.d-xs-block.d-sm-block {
     text-align: right;
     letter-spacing: -0.02em;
   }
+
+  .product-reviews-modal-header .close {
+    padding: 1rem 2rem 0 0;
+  }
+
 }
 
 /* Tablet */
@@ -1725,9 +1742,61 @@ img.d-block.d-xs-block.d-sm-block {
 
 .modal-review--text.--text-collapsed {
   white-space: nowrap;
-  height: min-content;
+  /* height: min-content; */
+  height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
+}
+.modal-review--more-text-label {
+  position: relative;
+  text-align: center;
+  height: 100%;
+}
+.modal-review--text.--text-collapsed + .modal-review--more-text {
+  box-shadow: 0px 0px 40px 20px #fff inset;
+  opacity: .8;
+  top: 0;
+}
+
+.modal-review--text.--text-collapsed + .modal-review--more-text strong {
+  position: absolute;
+  top: 30px;
+  left: 45%;
+}
+
+.modal-review--text.--text-expanded .modal-review--more-text strong {
+  position: relative;
+}
+.modal-review-text-cta-toggle {
+  font-size: 18px;
+}
+
+/* .modal-review--text.--text-collapsed .modal-review--more-text strong b { */
+/*   position: absolute; */
+/*   left: -15px; */
+/*   top: 0px; */
+/* } */
+
+
+#app[data-navigator-vendor="Apple Computer, Inc."] .modal-review--text.--text-collapsed .modal-review--more-text strong b {
+
+  top: 5px;
+
+}
+
+#app[data-navigator-vendor="Google Inc."] .modal-review--text.--text-collapsed .modal-review--more-text strong b {
+
+  top: 5px;
+
+}
+
+.modal_review_title {
+  position: relative;
+  z-index: 1;
+}
+
+.modal_review article {
   position: relative;
 }
 
@@ -1743,13 +1812,47 @@ img.d-block.d-xs-block.d-sm-block {
   position: absolute;
   bottom: 0;
   right: 0;
+  left: 0;
   text-align: center;
   background: #FFFFFF;
-  box-shadow: 0px 0px 40px 40px #fff;
   color: #50448A;
   font-family: 'DM Sans';
   font-weight: 400;
   padding: 0 10px 0 0;
+
+}
+
+.modal-review--more-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin-top: -12px;
+
+  color: #50448A;
+  font-family: 'DM Sans';
+  font-weight: 400;
+}
+
+.modal-review--less-text {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: #50448A;
+  font-family: 'DM Sans';
+  font-weight: 400;
+  padding: 0 0 10px;
+}
+
+.modal-review-text-cta-toggle:hover {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #50448A;
+}
+
+.modal-review-text-cta-toggle:hover strong {
+  text-decoration: underline;
+  color: #50448A;
 
 }
 
@@ -1783,7 +1886,6 @@ img.d-block.d-xs-block.d-sm-block {
 
 .reviews-modal--sub-filter-group {
   display: block;
-
 }
 
 .reviews-modal--sub-filter-group .progress {
@@ -1908,4 +2010,25 @@ img.d-block.d-xs-block.d-sm-block {
 }
 .font-style-base {
   font-weight: 100;
+}
+
+.matching_score_modal_num {
+  height: 135px;
+  padding-left: 10px;
+}
+
+
+#app[data-navigator-vendor="Apple Computer, Inc."] .matching_score_modal_num {
+  height: 115px;
+  padding-left: 0;
+
+}
+#app[data-navigator-vendor="Apple Computer, Inc."] .matching_score_num {
+  height: 125px;
+  width: 132px;
+}
+
+#app[data-navigator-vendor="Google Inc."] .matching_score_modal_num {
+  height: 135px;
+  padding-left: 10px;
 }
